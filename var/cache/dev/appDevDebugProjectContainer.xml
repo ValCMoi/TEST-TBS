@@ -153,7 +153,7 @@
     <parameter key="jwt_public_key_path">/home/val/Projet/TEST-TBS/app/../var/jwt/public.pem</parameter>
     <parameter key="jwt_key_pass_phrase"></parameter>
     <parameter key="jwt_token_ttl">3600</parameter>
-    <parameter key="kernel.project_dir">/home/val/Projet/TEST-TBS</parameter>
+    <parameter key="kernel.project_dir">/home/val/Projet/TEST-TBS/app/../</parameter>
     <parameter key="locale">en</parameter>
     <parameter key="fragment.renderer.hinclude.global_template">null</parameter>
     <parameter key="fragment.path">/_fragment</parameter>
@@ -648,7 +648,7 @@
       <parameter>ResetPassword</parameter>
       <parameter>Default</parameter>
     </parameter>
-    <parameter key="doctrine_migrations.dir_name">/home/val/Projet/TEST-TBS/src/Migrations</parameter>
+    <parameter key="doctrine_migrations.dir_name">/home/val/Projet/TEST-TBS/app/..//src/Migrations</parameter>
     <parameter key="doctrine_migrations.namespace">AppBundle\Migrations</parameter>
     <parameter key="doctrine_migrations.table_name">migration_versions</parameter>
     <parameter key="doctrine_migrations.name">Application Migrations</parameter>
@@ -897,7 +897,7 @@
                 <tag name="cache.pool" clearer="cache.default_clearer"/>
                 <argument>x9CplS8AwV</argument>
                 <argument>0</argument>
-                <argument>CY816Ro+UbtGzNNmZho8gT</argument>
+                <argument>8YYOe++2L5okeLJOw6ja0K</argument>
                 <argument>/home/val/Projet/TEST-TBS/var/cache/dev/pools</argument>
                 <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
                 <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
@@ -1085,7 +1085,7 @@
       <tag name="cache.pool" clearer="cache.default_clearer"/>
       <argument>YO5HkTvcMx</argument>
       <argument>0</argument>
-      <argument>CY816Ro+UbtGzNNmZho8gT</argument>
+      <argument>8YYOe++2L5okeLJOw6ja0K</argument>
       <argument>/home/val/Projet/TEST-TBS/var/cache/dev/pools</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
@@ -1095,7 +1095,7 @@
       <tag name="cache.pool" clearer="cache.default_clearer"/>
       <argument>bn8OfKb-cS</argument>
       <argument>0</argument>
-      <argument>CY816Ro+UbtGzNNmZho8gT</argument>
+      <argument>8YYOe++2L5okeLJOw6ja0K</argument>
       <argument>/home/val/Projet/TEST-TBS/var/cache/dev/pools</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
@@ -2533,7 +2533,7 @@
         </argument>
         <argument type="service">
           <service class="Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider" public="false">
-            <argument>6442955d63a681.81260595</argument>
+            <argument>644423f61f4557.52928257</argument>
           </service>
         </argument>
         <argument type="service">
@@ -2557,7 +2557,7 @@
         </argument>
         <argument type="service">
           <service class="Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider" public="false">
-            <argument>6442955d63a681.81260595</argument>
+            <argument>644423f61f4557.52928257</argument>
           </service>
         </argument>
       </argument>
@@ -2823,7 +2823,7 @@
         <argument type="service">
           <service class="Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener" public="false">
             <argument type="service" id="security.token_storage"/>
-            <argument>6442955d63a681.81260595</argument>
+            <argument>644423f61f4557.52928257</argument>
             <argument type="service" id="monolog.logger.security" on-invalid="null"/>
             <argument type="service" id="security.authentication.manager"/>
           </service>
@@ -3014,7 +3014,7 @@
         <argument type="service">
           <service class="Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener" public="false">
             <argument type="service" id="security.token_storage"/>
-            <argument>6442955d63a681.81260595</argument>
+            <argument>644423f61f4557.52928257</argument>
             <argument type="service" id="monolog.logger.security" on-invalid="null"/>
             <argument type="service" id="security.authentication.manager"/>
           </service>
