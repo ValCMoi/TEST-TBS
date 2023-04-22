@@ -72,7 +72,7 @@ class SubscriptionController extends Controller
             $res[] = $value->toString();
         }
 
-        return  $subscriptions ? new JsonResponse($res, Response::HTTP_OK) : new Response(Response::HTTP_BAD_REQUEST, "Subscription not exist for this user");
+        return new JsonResponse($res, Response::HTTP_OK);
     }
 
     /**

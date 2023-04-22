@@ -127,28 +127,6 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             }
             not_contact_new:
 
-            // contact_show
-            if (preg_match('#^/contact/(?P<id>[^/]++)$#s', $pathinfo, $matches)) {
-                if (!in_array($this->context->getMethod(), array('GET', 'HEAD'))) {
-                    $allow = array_merge($allow, array('GET', 'HEAD'));
-                    goto not_contact_show;
-                }
-
-                return $this->mergeDefaults(array_replace($matches, array('_route' => 'contact_show')), array (  '_controller' => 'AppBundle\\Controller\\ContactController::showAction',));
-            }
-            not_contact_show:
-
-            // contact_edit
-            if (preg_match('#^/contact/(?P<id>[^/]++)/edit$#s', $pathinfo, $matches)) {
-                if (!in_array($this->context->getMethod(), array('GET', 'POST', 'HEAD'))) {
-                    $allow = array_merge($allow, array('GET', 'POST', 'HEAD'));
-                    goto not_contact_edit;
-                }
-
-                return $this->mergeDefaults(array_replace($matches, array('_route' => 'contact_edit')), array (  '_controller' => 'AppBundle\\Controller\\ContactController::editAction',));
-            }
-            not_contact_edit:
-
             // contact_delete
             if (preg_match('#^/contact/(?P<id>[^/]++)$#s', $pathinfo, $matches)) {
                 if ($this->context->getMethod() != 'DELETE') {
@@ -208,21 +186,6 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         }
 
         if (0 === strpos($pathinfo, '/subscription')) {
-            // subscription_index
-            if (rtrim($pathinfo, '/') === '/subscription') {
-                if (!in_array($this->context->getMethod(), array('GET', 'HEAD'))) {
-                    $allow = array_merge($allow, array('GET', 'HEAD'));
-                    goto not_subscription_index;
-                }
-
-                if (substr($pathinfo, -1) !== '/') {
-                    return $this->redirect($pathinfo.'/', 'subscription_index');
-                }
-
-                return array (  '_controller' => 'AppBundle\\Controller\\SubscriptionController::indexAction',  '_route' => 'subscription_index',);
-            }
-            not_subscription_index:
-
             // subscription_new
             if ($pathinfo === '/subscription/new') {
                 if ($this->context->getMethod() != 'POST') {

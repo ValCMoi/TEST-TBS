@@ -225,3 +225,8 @@ aaed9b,::1,GET,http://localhost:8001/subscription/89/,1682170984,,404
 1b4750,::1,GET,http://localhost:8001/subscription/4,1682171002,,200
 8ab598,::1,GET,http://localhost:8001/product/6,1682171477,1a10ec,200
 1a10ec,::1,DELETE,http://localhost:8001/product/6,1682171477,,500
+dd8518,127.0.0.1,GET,http://127.0.0.1:8001/subscription/10,1682178754,d89c8c,200
+d89c8c,127.0.0.1,GET,http://127.0.0.1:8001/subscription/10,1682178754,,500
+9d8f13,127.0.0.1,GET,http://127.0.0.1:8001/subscription/10,1682178817,,200
+b40e3f,127.0.0.1,GET,http://127.0.0.1:8001/subscription/156,1682178825,,200
+29e2a5,127.0.0.1,GET,http://localhost:8001/subscription/156,1682179169,,200
