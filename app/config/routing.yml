@@ -1,7 +1,21 @@
-fos_user:
-    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+app_subscription:
+    resource: "@AppBundle/Controller/SubscriptionController.php"
+    type:     annotation
 
+app_contact:
+    resource: "@AppBundle/Controller/ContactController.php"
+    type:     annotation
+
+app_product:
+    resource: "@AppBundle/Controller/ProductController.php"
+    type:     annotation
+    
 app:
     resource: "@AppBundle/Controller"
     type: annotation
     prefix: /
+
+create_contact:
+    path: /contact
+    defaults:
+        _controller: 'AppBundle\Controller\ContactController::createContactAction'

@@ -2979,9 +2979,9 @@ class Container implements ResettableContainerInterface
 protected $parameterBag;
 protected $services = array();
 protected $methodMap = array();
-protected $privates = array();
 protected $aliases = array();
 protected $loading = array();
+protected $privates = array();
 private $underscoreMap = array('_'=>'','.'=>'_','\\'=>'_');
 private $envCache = array();
 public function __construct(ParameterBagInterface $parameterBag = null)
@@ -3067,14 +3067,14 @@ for ($i = 2;;) {
 if (isset($this->privates[$id])) {
 @trigger_error(sprintf('Requesting the "%s" private service is deprecated since Symfony 3.2 and won\'t be supported anymore in Symfony 4.0.', $id), E_USER_DEPRECATED);
 }
-if ('service_container'=== $id) {
-return $this;
-}
 if (isset($this->aliases[$id])) {
 $id = $this->aliases[$id];
 }
 if (isset($this->services[$id])) {
 return $this->services[$id];
+}
+if ('service_container'=== $id) {
+return $this;
 }
 if (isset($this->loading[$id])) {
 throw new ServiceCircularReferenceException($id, array_keys($this->loading));
@@ -3117,11 +3117,11 @@ return $service;
 public function initialized($id)
 {
 $id = strtolower($id);
-if ('service_container'=== $id) {
-return false;
-}
 if (isset($this->aliases[$id])) {
 $id = $this->aliases[$id];
+}
+if ('service_container'=== $id) {
+return false;
 }
 return isset($this->services[$id]);
 }
@@ -4643,8 +4643,8 @@ if (null !== $result) {
 break;
 }
 } catch (AccountStatusException $e) {
-$e->setToken($token);
-throw $e;
+$lastException = $e;
+break;
 } catch (AuthenticationException $e) {
 $lastException = $e;
 }

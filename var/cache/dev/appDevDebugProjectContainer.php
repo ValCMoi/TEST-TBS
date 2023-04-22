@@ -33,6 +33,7 @@ class appDevDebugProjectContainer extends Container
         $this->methodMap = array(
             'annotation_reader' => 'getAnnotationReaderService',
             'annotations.reader' => 'getAnnotations_ReaderService',
+            'app.controller.contact' => 'getApp_Controller_ContactService',
             'assets.context' => 'getAssets_ContextService',
             'assets.packages' => 'getAssets_PackagesService',
             'cache.annotations' => 'getCache_AnnotationsService',
@@ -82,6 +83,7 @@ class appDevDebugProjectContainer extends Container
             'doctrine.orm.default_entity_manager.property_info_extractor' => 'getDoctrine_Orm_DefaultEntityManager_PropertyInfoExtractorService',
             'doctrine.orm.default_listeners.attach_entity_listeners' => 'getDoctrine_Orm_DefaultListeners_AttachEntityListenersService',
             'doctrine.orm.default_manager_configurator' => 'getDoctrine_Orm_DefaultManagerConfiguratorService',
+            'doctrine.orm.entity_manager' => 'getDoctrine_Orm_EntityManagerService',
             'doctrine.orm.validator.unique' => 'getDoctrine_Orm_Validator_UniqueService',
             'doctrine.orm.validator_initializer' => 'getDoctrine_Orm_ValidatorInitializerService',
             'doctrine.query_dql_command' => 'getDoctrine_QueryDqlCommandService',
@@ -413,6 +415,7 @@ class appDevDebugProjectContainer extends Container
             'sonata.core.form.type.equal_legacy' => 'getSonata_Core_Form_Type_EqualLegacyService',
             'sonata.core.form.type.translatable_choice' => 'getSonata_Core_Form_Type_TranslatableChoiceService',
             'sonata.core.model.adapter.chain' => 'getSonata_Core_Model_Adapter_ChainService',
+            'sonata.core.model.adapter.doctrine_orm' => 'getSonata_Core_Model_Adapter_DoctrineOrmService',
             'sonata.core.slugify.cocur' => 'getSonata_Core_Slugify_CocurService',
             'sonata.core.slugify.native' => 'getSonata_Core_Slugify_NativeService',
             'sonata.core.twig.deprecated_template_extension' => 'getSonata_Core_Twig_DeprecatedTemplateExtensionService',
@@ -529,6 +532,7 @@ class appDevDebugProjectContainer extends Container
             'security.role_hierarchy' => true,
             'security.user_checker' => true,
             'session.storage.metadata_bag' => true,
+            'sonata.core.model.adapter.doctrine_orm' => true,
             'swiftmailer.mailer.default.transport.eventdispatcher' => true,
             'templating.locator' => true,
             'validator.validator_factory' => true,
@@ -582,7 +586,6 @@ class appDevDebugProjectContainer extends Container
             'doctrine.orm.default_metadata_cache' => 'doctrine_cache.providers.doctrine.orm.default_metadata_cache',
             'doctrine.orm.default_query_cache' => 'doctrine_cache.providers.doctrine.orm.default_query_cache',
             'doctrine.orm.default_result_cache' => 'doctrine_cache.providers.doctrine.orm.default_result_cache',
-            'doctrine.orm.entity_manager' => 'doctrine.orm.default_entity_manager',
             'event_dispatcher' => 'debug.event_dispatcher',
             'fos_user.util.username_canonicalizer' => 'fos_user.util.email_canonicalizer',
             'lexik\\bundle\\jwtauthenticationbundle\\encoder\\jwtencoderinterface' => 'lexik_jwt_authentication.encoder.default',
@@ -623,12 +626,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'annotation_reader' service.
+     * Gets the public 'annotation_reader' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Common\Annotations\CachedReader A Doctrine\Common\Annotations\CachedReader instance
+     * @return \Doctrine\Common\Annotations\CachedReader
      */
     protected function getAnnotationReaderService()
     {
@@ -636,12 +636,19 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'assets.context' service.
+     * Gets the public 'app.controller.contact' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
+     * @return \AppBundle\Controller\ContactController
+     */
+    protected function getApp_Controller_ContactService()
+    {
+        return $this->services['app.controller.contact'] = new \AppBundle\Controller\ContactController($this->get('doctrine.orm.entity_manager'));
+    }
+
+    /**
+     * Gets the public 'assets.context' shared service.
      *
-     * @return \Symfony\Component\Asset\Context\RequestStackContext A Symfony\Component\Asset\Context\RequestStackContext instance
+     * @return \Symfony\Component\Asset\Context\RequestStackContext
      */
     protected function getAssets_ContextService()
     {
@@ -649,12 +656,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'assets.packages' service.
+     * Gets the public 'assets.packages' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Asset\Packages A Symfony\Component\Asset\Packages instance
+     * @return \Symfony\Component\Asset\Packages
      */
     protected function getAssets_PackagesService()
     {
@@ -662,12 +666,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'cache.app' service.
+     * Gets the public 'cache.app' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Cache\Adapter\FilesystemAdapter A Symfony\Component\Cache\Adapter\FilesystemAdapter instance
+     * @return \Symfony\Component\Cache\Adapter\FilesystemAdapter
      */
     protected function getCache_AppService()
     {
@@ -681,12 +682,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'cache.default_clearer' service.
+     * Gets the public 'cache.default_clearer' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\CacheClearer\Psr6CacheClearer A Symfony\Component\HttpKernel\CacheClearer\Psr6CacheClearer instance
+     * @return \Symfony\Component\HttpKernel\CacheClearer\Psr6CacheClearer
      */
     protected function getCache_DefaultClearerService()
     {
@@ -700,25 +698,19 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'cache.system' service.
+     * Gets the public 'cache.system' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Cache\Adapter\AdapterInterface A Symfony\Component\Cache\Adapter\AdapterInterface instance
+     * @return \Symfony\Component\Cache\Adapter\AdapterInterface
      */
     protected function getCache_SystemService()
     {
-        return $this->services['cache.system'] = \Symfony\Component\Cache\Adapter\AbstractAdapter::createSystemCache('YO5HkTvcMx', 0, '88Kd2Oca2RCtQpebjCEIao', (__DIR__.'/pools'), $this->get('monolog.logger.cache', ContainerInterface::NULL_ON_INVALID_REFERENCE));
+        return $this->services['cache.system'] = \Symfony\Component\Cache\Adapter\AbstractAdapter::createSystemCache('YO5HkTvcMx', 0, 'CY816Ro+UbtGzNNmZho8gT', (__DIR__.'/pools'), $this->get('monolog.logger.cache', ContainerInterface::NULL_ON_INVALID_REFERENCE));
     }
 
     /**
-     * Gets the 'cache_clearer' service.
+     * Gets the public 'cache_clearer' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\CacheClearer\ChainCacheClearer A Symfony\Component\HttpKernel\CacheClearer\ChainCacheClearer instance
+     * @return \Symfony\Component\HttpKernel\CacheClearer\ChainCacheClearer
      */
     protected function getCacheClearerService()
     {
@@ -726,12 +718,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'cache_warmer' service.
+     * Gets the public 'cache_warmer' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerAggregate A Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerAggregate instance
+     * @return \Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerAggregate
      */
     protected function getCacheWarmerService()
     {
@@ -740,16 +729,13 @@ class appDevDebugProjectContainer extends Container
 
         $c = new \Symfony\Bundle\FrameworkBundle\CacheWarmer\TemplateFinder($a, $b, ($this->targetDirs[3].'/app/Resources'));
 
-        return $this->services['cache_warmer'] = new \Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerAggregate(array(0 => new \Symfony\Bundle\FrameworkBundle\CacheWarmer\TemplatePathsCacheWarmer($c, ${($_ = isset($this->services['templating.locator']) ? $this->services['templating.locator'] : $this->getTemplating_LocatorService()) && false ?: '_'}), 1 => $this->get('kernel.class_cache.cache_warmer'), 2 => new \Symfony\Bundle\FrameworkBundle\CacheWarmer\TranslationsCacheWarmer($this->get('translator.default')), 3 => new \Symfony\Bundle\FrameworkBundle\CacheWarmer\ValidatorCacheWarmer($this->get('validator.builder'), (__DIR__.'/validation.php'), \Symfony\Component\Cache\Adapter\AbstractAdapter::createSystemCache('x9CplS8AwV', 0, '88Kd2Oca2RCtQpebjCEIao', (__DIR__.'/pools'), $this->get('monolog.logger.cache', ContainerInterface::NULL_ON_INVALID_REFERENCE))), 4 => new \Symfony\Bundle\FrameworkBundle\CacheWarmer\RouterCacheWarmer($this->get('router')), 5 => new \Symfony\Bundle\FrameworkBundle\CacheWarmer\AnnotationsCacheWarmer(${($_ = isset($this->services['annotations.reader']) ? $this->services['annotations.reader'] : $this->getAnnotations_ReaderService()) && false ?: '_'}, (__DIR__.'/annotations.php'), ${($_ = isset($this->services['cache.annotations']) ? $this->services['cache.annotations'] : $this->getCache_AnnotationsService()) && false ?: '_'}), 6 => new \Symfony\Bundle\TwigBundle\CacheWarmer\TemplateCacheCacheWarmer($this, $c, array(($this->targetDirs[3].'/vendor/knplabs/knp-menu/src/Knp/Menu/Resources/views') => NULL)), 7 => new \Symfony\Bundle\TwigBundle\CacheWarmer\TemplateCacheWarmer($this, new \Symfony\Bundle\TwigBundle\TemplateIterator($a, ($this->targetDirs[3].'/app'), array(($this->targetDirs[3].'/vendor/knplabs/knp-menu/src/Knp/Menu/Resources/views') => NULL))), 8 => new \Symfony\Bridge\Doctrine\CacheWarmer\ProxyCacheWarmer($this->get('doctrine')), 9 => $this->get('sonata.admin.route.cache_warmup')));
+        return $this->services['cache_warmer'] = new \Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerAggregate(array(0 => new \Symfony\Bundle\FrameworkBundle\CacheWarmer\TemplatePathsCacheWarmer($c, ${($_ = isset($this->services['templating.locator']) ? $this->services['templating.locator'] : $this->getTemplating_LocatorService()) && false ?: '_'}), 1 => $this->get('kernel.class_cache.cache_warmer'), 2 => new \Symfony\Bundle\FrameworkBundle\CacheWarmer\TranslationsCacheWarmer($this->get('translator.default')), 3 => new \Symfony\Bundle\FrameworkBundle\CacheWarmer\ValidatorCacheWarmer($this->get('validator.builder'), (__DIR__.'/validation.php'), \Symfony\Component\Cache\Adapter\AbstractAdapter::createSystemCache('x9CplS8AwV', 0, 'CY816Ro+UbtGzNNmZho8gT', (__DIR__.'/pools'), $this->get('monolog.logger.cache', ContainerInterface::NULL_ON_INVALID_REFERENCE))), 4 => new \Symfony\Bundle\FrameworkBundle\CacheWarmer\RouterCacheWarmer($this->get('router')), 5 => new \Symfony\Bundle\FrameworkBundle\CacheWarmer\AnnotationsCacheWarmer(${($_ = isset($this->services['annotations.reader']) ? $this->services['annotations.reader'] : $this->getAnnotations_ReaderService()) && false ?: '_'}, (__DIR__.'/annotations.php'), ${($_ = isset($this->services['cache.annotations']) ? $this->services['cache.annotations'] : $this->getCache_AnnotationsService()) && false ?: '_'}), 6 => new \Symfony\Bundle\TwigBundle\CacheWarmer\TemplateCacheCacheWarmer($this, $c, array(($this->targetDirs[3].'/vendor/knplabs/knp-menu/src/Knp/Menu/Resources/views') => NULL)), 7 => new \Symfony\Bundle\TwigBundle\CacheWarmer\TemplateCacheWarmer($this, new \Symfony\Bundle\TwigBundle\TemplateIterator($a, ($this->targetDirs[3].'/app'), array(($this->targetDirs[3].'/vendor/knplabs/knp-menu/src/Knp/Menu/Resources/views') => NULL))), 8 => new \Symfony\Bridge\Doctrine\CacheWarmer\ProxyCacheWarmer($this->get('doctrine')), 9 => $this->get('sonata.admin.route.cache_warmup')));
     }
 
     /**
-     * Gets the 'config_cache_factory' service.
+     * Gets the public 'config_cache_factory' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Config\ResourceCheckerConfigCacheFactory A Symfony\Component\Config\ResourceCheckerConfigCacheFactory instance
+     * @return \Symfony\Component\Config\ResourceCheckerConfigCacheFactory
      */
     protected function getConfigCacheFactoryService()
     {
@@ -757,12 +743,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'data_collector.dump' service.
+     * Gets the public 'data_collector.dump' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\DataCollector\DumpDataCollector A Symfony\Component\HttpKernel\DataCollector\DumpDataCollector instance
+     * @return \Symfony\Component\HttpKernel\DataCollector\DumpDataCollector
      */
     protected function getDataCollector_DumpService()
     {
@@ -770,12 +753,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'data_collector.form' service.
+     * Gets the public 'data_collector.form' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\DataCollector\FormDataCollector A Symfony\Component\Form\Extension\DataCollector\FormDataCollector instance
+     * @return \Symfony\Component\Form\Extension\DataCollector\FormDataCollector
      */
     protected function getDataCollector_FormService()
     {
@@ -783,12 +763,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'data_collector.form.extractor' service.
+     * Gets the public 'data_collector.form.extractor' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\DataCollector\FormDataExtractor A Symfony\Component\Form\Extension\DataCollector\FormDataExtractor instance
+     * @return \Symfony\Component\Form\Extension\DataCollector\FormDataExtractor
      */
     protected function getDataCollector_Form_ExtractorService()
     {
@@ -796,12 +773,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'data_collector.request' service.
+     * Gets the public 'data_collector.request' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\DataCollector\RequestDataCollector A Symfony\Bundle\FrameworkBundle\DataCollector\RequestDataCollector instance
+     * @return \Symfony\Bundle\FrameworkBundle\DataCollector\RequestDataCollector
      */
     protected function getDataCollector_RequestService()
     {
@@ -809,12 +783,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'data_collector.router' service.
+     * Gets the public 'data_collector.router' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\DataCollector\RouterDataCollector A Symfony\Bundle\FrameworkBundle\DataCollector\RouterDataCollector instance
+     * @return \Symfony\Bundle\FrameworkBundle\DataCollector\RouterDataCollector
      */
     protected function getDataCollector_RouterService()
     {
@@ -822,12 +793,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'data_collector.translation' service.
+     * Gets the public 'data_collector.translation' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\DataCollector\TranslationDataCollector A Symfony\Component\Translation\DataCollector\TranslationDataCollector instance
+     * @return \Symfony\Component\Translation\DataCollector\TranslationDataCollector
      */
     protected function getDataCollector_TranslationService()
     {
@@ -835,12 +803,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'debug.argument_resolver' service.
+     * Gets the public 'debug.argument_resolver' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\Controller\TraceableArgumentResolver A Symfony\Component\HttpKernel\Controller\TraceableArgumentResolver instance
+     * @return \Symfony\Component\HttpKernel\Controller\TraceableArgumentResolver
      */
     protected function getDebug_ArgumentResolverService()
     {
@@ -848,12 +813,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'debug.controller_resolver' service.
+     * Gets the public 'debug.controller_resolver' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\Controller\TraceableControllerResolver A Symfony\Component\HttpKernel\Controller\TraceableControllerResolver instance
+     * @return \Symfony\Component\HttpKernel\Controller\TraceableControllerResolver
      */
     protected function getDebug_ControllerResolverService()
     {
@@ -861,12 +823,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'debug.debug_handlers_listener' service.
+     * Gets the public 'debug.debug_handlers_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\EventListener\DebugHandlersListener A Symfony\Component\HttpKernel\EventListener\DebugHandlersListener instance
+     * @return \Symfony\Component\HttpKernel\EventListener\DebugHandlersListener
      */
     protected function getDebug_DebugHandlersListenerService()
     {
@@ -874,12 +833,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'debug.dump_listener' service.
+     * Gets the public 'debug.dump_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\EventListener\DumpListener A Symfony\Component\HttpKernel\EventListener\DumpListener instance
+     * @return \Symfony\Component\HttpKernel\EventListener\DumpListener
      */
     protected function getDebug_DumpListenerService()
     {
@@ -887,12 +843,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'debug.event_dispatcher' service.
+     * Gets the public 'debug.event_dispatcher' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher A Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher instance
+     * @return \Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher
      */
     protected function getDebug_EventDispatcherService()
     {
@@ -933,12 +886,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'debug.stopwatch' service.
+     * Gets the public 'debug.stopwatch' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Stopwatch\Stopwatch A Symfony\Component\Stopwatch\Stopwatch instance
+     * @return \Symfony\Component\Stopwatch\Stopwatch
      */
     protected function getDebug_StopwatchService()
     {
@@ -946,12 +896,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine' service.
+     * Gets the public 'doctrine' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Registry A Doctrine\Bundle\DoctrineBundle\Registry instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Registry
      */
     protected function getDoctrineService()
     {
@@ -959,12 +906,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.cache_clear_metadata_command' service.
+     * Gets the public 'doctrine.cache_clear_metadata_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\ClearMetadataCacheDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\ClearMetadataCacheDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\ClearMetadataCacheDoctrineCommand
      */
     protected function getDoctrine_CacheClearMetadataCommandService()
     {
@@ -972,12 +916,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.cache_clear_query_cache_command' service.
+     * Gets the public 'doctrine.cache_clear_query_cache_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\ClearQueryCacheDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\ClearQueryCacheDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\ClearQueryCacheDoctrineCommand
      */
     protected function getDoctrine_CacheClearQueryCacheCommandService()
     {
@@ -985,12 +926,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.cache_clear_result_command' service.
+     * Gets the public 'doctrine.cache_clear_result_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\ClearResultCacheDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\ClearResultCacheDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\ClearResultCacheDoctrineCommand
      */
     protected function getDoctrine_CacheClearResultCommandService()
     {
@@ -998,12 +936,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.cache_collection_region_command' service.
+     * Gets the public 'doctrine.cache_collection_region_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\CollectionRegionDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\CollectionRegionDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\CollectionRegionDoctrineCommand
      */
     protected function getDoctrine_CacheCollectionRegionCommandService()
     {
@@ -1011,12 +946,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.clear_entity_region_command' service.
+     * Gets the public 'doctrine.clear_entity_region_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\EntityRegionCacheDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\EntityRegionCacheDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\EntityRegionCacheDoctrineCommand
      */
     protected function getDoctrine_ClearEntityRegionCommandService()
     {
@@ -1024,12 +956,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.clear_query_region_command' service.
+     * Gets the public 'doctrine.clear_query_region_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\QueryRegionCacheDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\QueryRegionCacheDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\QueryRegionCacheDoctrineCommand
      */
     protected function getDoctrine_ClearQueryRegionCommandService()
     {
@@ -1037,12 +966,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.database_create_command' service.
+     * Gets the public 'doctrine.database_create_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\CreateDatabaseDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\CreateDatabaseDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\CreateDatabaseDoctrineCommand
      */
     protected function getDoctrine_DatabaseCreateCommandService()
     {
@@ -1050,12 +976,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.database_drop_command' service.
+     * Gets the public 'doctrine.database_drop_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\DropDatabaseDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\DropDatabaseDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\DropDatabaseDoctrineCommand
      */
     protected function getDoctrine_DatabaseDropCommandService()
     {
@@ -1063,12 +986,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.database_import_command' service.
+     * Gets the public 'doctrine.database_import_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\ImportDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\ImportDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\ImportDoctrineCommand
      */
     protected function getDoctrine_DatabaseImportCommandService()
     {
@@ -1076,12 +996,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.dbal.connection_factory' service.
+     * Gets the public 'doctrine.dbal.connection_factory' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\ConnectionFactory A Doctrine\Bundle\DoctrineBundle\ConnectionFactory instance
+     * @return \Doctrine\Bundle\DoctrineBundle\ConnectionFactory
      */
     protected function getDoctrine_Dbal_ConnectionFactoryService()
     {
@@ -1089,12 +1006,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.dbal.default_connection' service.
+     * Gets the public 'doctrine.dbal.default_connection' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\DBAL\Connection A Doctrine\DBAL\Connection instance
+     * @return \Doctrine\DBAL\Connection
      */
     protected function getDoctrine_Dbal_DefaultConnectionService()
     {
@@ -1113,12 +1027,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.ensure_production_settings_command' service.
+     * Gets the public 'doctrine.ensure_production_settings_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\EnsureProductionSettingsDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\EnsureProductionSettingsDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\EnsureProductionSettingsDoctrineCommand
      */
     protected function getDoctrine_EnsureProductionSettingsCommandService()
     {
@@ -1126,12 +1037,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.fixtures_load_command' service.
+     * Gets the public 'doctrine.fixtures_load_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand A Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand instance
+     * @return \Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand
      */
     protected function getDoctrine_FixturesLoadCommandService()
     {
@@ -1139,12 +1047,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.generate_entities_command' service.
+     * Gets the public 'doctrine.generate_entities_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\GenerateEntitiesDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\GenerateEntitiesDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\GenerateEntitiesDoctrineCommand
      */
     protected function getDoctrine_GenerateEntitiesCommandService()
     {
@@ -1152,12 +1057,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.mapping_convert_command' service.
+     * Gets the public 'doctrine.mapping_convert_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\ConvertMappingDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\ConvertMappingDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\ConvertMappingDoctrineCommand
      */
     protected function getDoctrine_MappingConvertCommandService()
     {
@@ -1165,25 +1067,19 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.mapping_import_command' service.
+     * Gets the public 'doctrine.mapping_import_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\ImportMappingDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\ImportMappingDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\ImportMappingDoctrineCommand
      */
     protected function getDoctrine_MappingImportCommandService()
     {
-        return $this->services['doctrine.mapping_import_command'] = new \Doctrine\Bundle\DoctrineBundle\Command\ImportMappingDoctrineCommand($this->get('doctrine'), array('FrameworkBundle' => 'Symfony\\Bundle\\FrameworkBundle\\FrameworkBundle', 'SecurityBundle' => 'Symfony\\Bundle\\SecurityBundle\\SecurityBundle', 'TwigBundle' => 'Symfony\\Bundle\\TwigBundle\\TwigBundle', 'MonologBundle' => 'Symfony\\Bundle\\MonologBundle\\MonologBundle', 'SwiftmailerBundle' => 'Symfony\\Bundle\\SwiftmailerBundle\\SwiftmailerBundle', 'DoctrineBundle' => 'Doctrine\\Bundle\\DoctrineBundle\\DoctrineBundle', 'SensioFrameworkExtraBundle' => 'Sensio\\Bundle\\FrameworkExtraBundle\\SensioFrameworkExtraBundle', 'SonataCoreBundle' => 'Sonata\\CoreBundle\\SonataCoreBundle', 'SonataBlockBundle' => 'Sonata\\BlockBundle\\SonataBlockBundle', 'KnpMenuBundle' => 'Knp\\Bundle\\MenuBundle\\KnpMenuBundle', 'SonataDoctrineORMAdminBundle' => 'Sonata\\DoctrineORMAdminBundle\\SonataDoctrineORMAdminBundle', 'SonataAdminBundle' => 'Sonata\\AdminBundle\\SonataAdminBundle', 'LexikJWTAuthenticationBundle' => 'Lexik\\Bundle\\JWTAuthenticationBundle\\LexikJWTAuthenticationBundle', 'FOSUserBundle' => 'FOS\\UserBundle\\FOSUserBundle', 'AppBundle' => 'AppBundle\\AppBundle', 'DebugBundle' => 'Symfony\\Bundle\\DebugBundle\\DebugBundle', 'WebProfilerBundle' => 'Symfony\\Bundle\\WebProfilerBundle\\WebProfilerBundle', 'SensioDistributionBundle' => 'Sensio\\Bundle\\DistributionBundle\\SensioDistributionBundle', 'SensioGeneratorBundle' => 'Sensio\\Bundle\\GeneratorBundle\\SensioGeneratorBundle', 'DoctrineFixturesBundle' => 'Doctrine\\Bundle\\FixturesBundle\\DoctrineFixturesBundle'));
+        return $this->services['doctrine.mapping_import_command'] = new \Doctrine\Bundle\DoctrineBundle\Command\ImportMappingDoctrineCommand($this->get('doctrine'), array('FrameworkBundle' => 'Symfony\\Bundle\\FrameworkBundle\\FrameworkBundle', 'SecurityBundle' => 'Symfony\\Bundle\\SecurityBundle\\SecurityBundle', 'TwigBundle' => 'Symfony\\Bundle\\TwigBundle\\TwigBundle', 'MonologBundle' => 'Symfony\\Bundle\\MonologBundle\\MonologBundle', 'SwiftmailerBundle' => 'Symfony\\Bundle\\SwiftmailerBundle\\SwiftmailerBundle', 'DoctrineBundle' => 'Doctrine\\Bundle\\DoctrineBundle\\DoctrineBundle', 'SensioFrameworkExtraBundle' => 'Sensio\\Bundle\\FrameworkExtraBundle\\SensioFrameworkExtraBundle', 'SonataCoreBundle' => 'Sonata\\CoreBundle\\SonataCoreBundle', 'SonataBlockBundle' => 'Sonata\\BlockBundle\\SonataBlockBundle', 'KnpMenuBundle' => 'Knp\\Bundle\\MenuBundle\\KnpMenuBundle', 'SonataDoctrineORMAdminBundle' => 'Sonata\\DoctrineORMAdminBundle\\SonataDoctrineORMAdminBundle', 'SonataAdminBundle' => 'Sonata\\AdminBundle\\SonataAdminBundle', 'LexikJWTAuthenticationBundle' => 'Lexik\\Bundle\\JWTAuthenticationBundle\\LexikJWTAuthenticationBundle', 'FOSUserBundle' => 'FOS\\UserBundle\\FOSUserBundle', 'AppBundle' => 'AppBundle\\AppBundle', 'DoctrineMigrationsBundle' => 'Doctrine\\Bundle\\MigrationsBundle\\DoctrineMigrationsBundle', 'DebugBundle' => 'Symfony\\Bundle\\DebugBundle\\DebugBundle', 'WebProfilerBundle' => 'Symfony\\Bundle\\WebProfilerBundle\\WebProfilerBundle', 'SensioDistributionBundle' => 'Sensio\\Bundle\\DistributionBundle\\SensioDistributionBundle', 'SensioGeneratorBundle' => 'Sensio\\Bundle\\GeneratorBundle\\SensioGeneratorBundle', 'DoctrineFixturesBundle' => 'Doctrine\\Bundle\\FixturesBundle\\DoctrineFixturesBundle'));
     }
 
     /**
-     * Gets the 'doctrine.mapping_info_command' service.
+     * Gets the public 'doctrine.mapping_info_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\InfoDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\InfoDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\InfoDoctrineCommand
      */
     protected function getDoctrine_MappingInfoCommandService()
     {
@@ -1191,12 +1087,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.orm.default_entity_listener_resolver' service.
+     * Gets the public 'doctrine.orm.default_entity_listener_resolver' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Mapping\ContainerAwareEntityListenerResolver A Doctrine\Bundle\DoctrineBundle\Mapping\ContainerAwareEntityListenerResolver instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Mapping\ContainerAwareEntityListenerResolver
      */
     protected function getDoctrine_Orm_DefaultEntityListenerResolverService()
     {
@@ -1204,17 +1097,25 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.orm.default_entity_manager' service.
+     * Gets the public 'doctrine.orm.default_entity_manager' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @param bool    $lazyLoad whether to try lazy-loading the service with a proxy
-     *
-     * @return \Doctrine\ORM\EntityManager A Doctrine\ORM\EntityManager instance
+     * @return \Doctrine\ORM\EntityManager
      */
-    protected function getDoctrine_Orm_DefaultEntityManagerService($lazyLoad = true)
+    public function getDoctrine_Orm_DefaultEntityManagerService($lazyLoad = true)
     {
+        if ($lazyLoad) {
+
+            return $this->services['doctrine.orm.default_entity_manager'] = new DoctrineORMEntityManager_000000001892f83600005571671295d09e859757b8063d0762c0ae6ec4090d6d(
+                function (&$wrappedInstance, \ProxyManager\Proxy\LazyLoadingInterface $proxy) {
+                    $wrappedInstance = $this->getDoctrine_Orm_DefaultEntityManagerService(false);
+
+                    $proxy->setProxyInitializer(null);
+
+                    return true;
+                }
+            );
+        }
+
         $a = new \Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain();
         $a->addDriver(new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($this->get('annotation_reader'), array(0 => ($this->targetDirs[3].'/src/AppBundle/Entity'))), 'AppBundle\\Entity');
         $a->addDriver(new \Doctrine\ORM\Mapping\Driver\XmlDriver(new \Doctrine\Common\Persistence\Mapping\Driver\SymfonyFileLocator(array(($this->targetDirs[3].'/vendor/friendsofsymfony/user-bundle/Resources/config/doctrine-mapping') => 'FOS\\UserBundle\\Model'), '.orm.xml')), 'FOS\\UserBundle\\Model');
@@ -1235,7 +1136,7 @@ class appDevDebugProjectContainer extends Container
         $b->setEntityListenerResolver($this->get('doctrine.orm.default_entity_listener_resolver'));
         $b->setRepositoryFactory(new \Doctrine\Bundle\DoctrineBundle\Repository\ContainerRepositoryFactory(NULL));
 
-        $this->services['doctrine.orm.default_entity_manager'] = $instance = \Doctrine\ORM\EntityManager::create($this->get('doctrine.dbal.default_connection'), $b);
+        $instance = \Doctrine\ORM\EntityManager::create($this->get('doctrine.dbal.default_connection'), $b);
 
         $this->get('doctrine.orm.default_manager_configurator')->configure($instance);
 
@@ -1243,12 +1144,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.orm.default_entity_manager.property_info_extractor' service.
+     * Gets the public 'doctrine.orm.default_entity_manager.property_info_extractor' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Doctrine\PropertyInfo\DoctrineExtractor A Symfony\Bridge\Doctrine\PropertyInfo\DoctrineExtractor instance
+     * @return \Symfony\Bridge\Doctrine\PropertyInfo\DoctrineExtractor
      */
     protected function getDoctrine_Orm_DefaultEntityManager_PropertyInfoExtractorService()
     {
@@ -1256,12 +1154,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.orm.default_listeners.attach_entity_listeners' service.
+     * Gets the public 'doctrine.orm.default_listeners.attach_entity_listeners' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\ORM\Tools\AttachEntityListenersListener A Doctrine\ORM\Tools\AttachEntityListenersListener instance
+     * @return \Doctrine\ORM\Tools\AttachEntityListenersListener
      */
     protected function getDoctrine_Orm_DefaultListeners_AttachEntityListenersService()
     {
@@ -1269,12 +1164,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.orm.default_manager_configurator' service.
+     * Gets the public 'doctrine.orm.default_manager_configurator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\ManagerConfigurator A Doctrine\Bundle\DoctrineBundle\ManagerConfigurator instance
+     * @return \Doctrine\Bundle\DoctrineBundle\ManagerConfigurator
      */
     protected function getDoctrine_Orm_DefaultManagerConfiguratorService()
     {
@@ -1282,12 +1174,19 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.orm.validator.unique' service.
+     * Gets the public 'doctrine.orm.entity_manager' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
+     * @throws RuntimeException always since this service is expected to be injected dynamically
+     */
+    protected function getDoctrine_Orm_EntityManagerService()
+    {
+        throw new RuntimeException('You have requested a synthetic service ("doctrine.orm.entity_manager"). The DIC does not know how to construct this service.');
+    }
+
+    /**
+     * Gets the public 'doctrine.orm.validator.unique' shared service.
      *
-     * @return \Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator A Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator instance
+     * @return \Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator
      */
     protected function getDoctrine_Orm_Validator_UniqueService()
     {
@@ -1295,12 +1194,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.orm.validator_initializer' service.
+     * Gets the public 'doctrine.orm.validator_initializer' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Doctrine\Validator\DoctrineInitializer A Symfony\Bridge\Doctrine\Validator\DoctrineInitializer instance
+     * @return \Symfony\Bridge\Doctrine\Validator\DoctrineInitializer
      */
     protected function getDoctrine_Orm_ValidatorInitializerService()
     {
@@ -1308,12 +1204,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.query_dql_command' service.
+     * Gets the public 'doctrine.query_dql_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\RunDqlDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\RunDqlDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\RunDqlDoctrineCommand
      */
     protected function getDoctrine_QueryDqlCommandService()
     {
@@ -1321,12 +1214,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.query_sql_command' service.
+     * Gets the public 'doctrine.query_sql_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\RunSqlDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\RunSqlDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\RunSqlDoctrineCommand
      */
     protected function getDoctrine_QuerySqlCommandService()
     {
@@ -1334,12 +1224,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.schema_create_command' service.
+     * Gets the public 'doctrine.schema_create_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\CreateSchemaDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\CreateSchemaDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\CreateSchemaDoctrineCommand
      */
     protected function getDoctrine_SchemaCreateCommandService()
     {
@@ -1347,12 +1234,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.schema_drop_command' service.
+     * Gets the public 'doctrine.schema_drop_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\DropSchemaDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\DropSchemaDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\DropSchemaDoctrineCommand
      */
     protected function getDoctrine_SchemaDropCommandService()
     {
@@ -1360,12 +1244,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.schema_update_command' service.
+     * Gets the public 'doctrine.schema_update_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\UpdateSchemaDoctrineCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\UpdateSchemaDoctrineCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\UpdateSchemaDoctrineCommand
      */
     protected function getDoctrine_SchemaUpdateCommandService()
     {
@@ -1373,12 +1254,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.schema_validate_command' service.
+     * Gets the public 'doctrine.schema_validate_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\ValidateSchemaCommand A Doctrine\Bundle\DoctrineBundle\Command\Proxy\ValidateSchemaCommand instance
+     * @return \Doctrine\Bundle\DoctrineBundle\Command\Proxy\ValidateSchemaCommand
      */
     protected function getDoctrine_SchemaValidateCommandService()
     {
@@ -1386,12 +1264,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine_cache.contains_command' service.
+     * Gets the public 'doctrine_cache.contains_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineCacheBundle\Command\ContainsCommand A Doctrine\Bundle\DoctrineCacheBundle\Command\ContainsCommand instance
+     * @return \Doctrine\Bundle\DoctrineCacheBundle\Command\ContainsCommand
      */
     protected function getDoctrineCache_ContainsCommandService()
     {
@@ -1399,12 +1274,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine_cache.delete_command' service.
+     * Gets the public 'doctrine_cache.delete_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineCacheBundle\Command\DeleteCommand A Doctrine\Bundle\DoctrineCacheBundle\Command\DeleteCommand instance
+     * @return \Doctrine\Bundle\DoctrineCacheBundle\Command\DeleteCommand
      */
     protected function getDoctrineCache_DeleteCommandService()
     {
@@ -1412,12 +1284,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine_cache.flush_command' service.
+     * Gets the public 'doctrine_cache.flush_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineCacheBundle\Command\FlushCommand A Doctrine\Bundle\DoctrineCacheBundle\Command\FlushCommand instance
+     * @return \Doctrine\Bundle\DoctrineCacheBundle\Command\FlushCommand
      */
     protected function getDoctrineCache_FlushCommandService()
     {
@@ -1425,12 +1294,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine_cache.providers.doctrine.orm.default_metadata_cache' service.
+     * Gets the public 'doctrine_cache.providers.doctrine.orm.default_metadata_cache' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Common\Cache\ArrayCache A Doctrine\Common\Cache\ArrayCache instance
+     * @return \Doctrine\Common\Cache\ArrayCache
      */
     protected function getDoctrineCache_Providers_Doctrine_Orm_DefaultMetadataCacheService()
     {
@@ -1442,12 +1308,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine_cache.providers.doctrine.orm.default_query_cache' service.
+     * Gets the public 'doctrine_cache.providers.doctrine.orm.default_query_cache' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Common\Cache\ArrayCache A Doctrine\Common\Cache\ArrayCache instance
+     * @return \Doctrine\Common\Cache\ArrayCache
      */
     protected function getDoctrineCache_Providers_Doctrine_Orm_DefaultQueryCacheService()
     {
@@ -1459,12 +1322,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine_cache.providers.doctrine.orm.default_result_cache' service.
+     * Gets the public 'doctrine_cache.providers.doctrine.orm.default_result_cache' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Common\Cache\ArrayCache A Doctrine\Common\Cache\ArrayCache instance
+     * @return \Doctrine\Common\Cache\ArrayCache
      */
     protected function getDoctrineCache_Providers_Doctrine_Orm_DefaultResultCacheService()
     {
@@ -1476,12 +1336,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine_cache.stats_command' service.
+     * Gets the public 'doctrine_cache.stats_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Doctrine\Bundle\DoctrineCacheBundle\Command\StatsCommand A Doctrine\Bundle\DoctrineCacheBundle\Command\StatsCommand instance
+     * @return \Doctrine\Bundle\DoctrineCacheBundle\Command\StatsCommand
      */
     protected function getDoctrineCache_StatsCommandService()
     {
@@ -1489,12 +1346,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'file_locator' service.
+     * Gets the public 'file_locator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\Config\FileLocator A Symfony\Component\HttpKernel\Config\FileLocator instance
+     * @return \Symfony\Component\HttpKernel\Config\FileLocator
      */
     protected function getFileLocatorService()
     {
@@ -1502,12 +1356,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'filesystem' service.
+     * Gets the public 'filesystem' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Filesystem\Filesystem A Symfony\Component\Filesystem\Filesystem instance
+     * @return \Symfony\Component\Filesystem\Filesystem
      */
     protected function getFilesystemService()
     {
@@ -1515,12 +1366,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.extension' service.
+     * Gets the public 'form.extension' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Form\Extension\DependencyInjectionExtension A Sonata\CoreBundle\Form\Extension\DependencyInjectionExtension instance
+     * @return \Sonata\CoreBundle\Form\Extension\DependencyInjectionExtension
      */
     protected function getForm_ExtensionService()
     {
@@ -1528,12 +1376,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.factory' service.
+     * Gets the public 'form.factory' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\FormFactory A Symfony\Component\Form\FormFactory instance
+     * @return \Symfony\Component\Form\FormFactory
      */
     protected function getForm_FactoryService()
     {
@@ -1541,12 +1386,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.registry' service.
+     * Gets the public 'form.registry' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\FormRegistry A Symfony\Component\Form\FormRegistry instance
+     * @return \Symfony\Component\Form\FormRegistry
      */
     protected function getForm_RegistryService()
     {
@@ -1554,12 +1396,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.resolved_type_factory' service.
+     * Gets the public 'form.resolved_type_factory' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\DataCollector\Proxy\ResolvedTypeFactoryDataCollectorProxy A Symfony\Component\Form\Extension\DataCollector\Proxy\ResolvedTypeFactoryDataCollectorProxy instance
+     * @return \Symfony\Component\Form\Extension\DataCollector\Proxy\ResolvedTypeFactoryDataCollectorProxy
      */
     protected function getForm_ResolvedTypeFactoryService()
     {
@@ -1567,12 +1406,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.birthday' service.
+     * Gets the public 'form.type.birthday' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\BirthdayType A Symfony\Component\Form\Extension\Core\Type\BirthdayType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\BirthdayType
      *
      * @deprecated The "form.type.birthday" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1584,12 +1420,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.button' service.
+     * Gets the public 'form.type.button' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\ButtonType A Symfony\Component\Form\Extension\Core\Type\ButtonType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\ButtonType
      *
      * @deprecated The "form.type.button" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1601,12 +1434,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.checkbox' service.
+     * Gets the public 'form.type.checkbox' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\CheckboxType A Symfony\Component\Form\Extension\Core\Type\CheckboxType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\CheckboxType
      *
      * @deprecated The "form.type.checkbox" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1618,12 +1448,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.choice' service.
+     * Gets the public 'form.type.choice' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\ChoiceType A Symfony\Component\Form\Extension\Core\Type\ChoiceType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\ChoiceType
      */
     protected function getForm_Type_ChoiceService()
     {
@@ -1631,12 +1458,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.collection' service.
+     * Gets the public 'form.type.collection' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\CollectionType A Symfony\Component\Form\Extension\Core\Type\CollectionType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\CollectionType
      *
      * @deprecated The "form.type.collection" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1648,12 +1472,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.country' service.
+     * Gets the public 'form.type.country' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\CountryType A Symfony\Component\Form\Extension\Core\Type\CountryType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\CountryType
      *
      * @deprecated The "form.type.country" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1665,12 +1486,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.currency' service.
+     * Gets the public 'form.type.currency' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\CurrencyType A Symfony\Component\Form\Extension\Core\Type\CurrencyType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\CurrencyType
      *
      * @deprecated The "form.type.currency" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1682,12 +1500,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.date' service.
+     * Gets the public 'form.type.date' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\DateType A Symfony\Component\Form\Extension\Core\Type\DateType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\DateType
      *
      * @deprecated The "form.type.date" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1699,12 +1514,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.datetime' service.
+     * Gets the public 'form.type.datetime' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\DateTimeType A Symfony\Component\Form\Extension\Core\Type\DateTimeType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\DateTimeType
      *
      * @deprecated The "form.type.datetime" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1716,12 +1528,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.email' service.
+     * Gets the public 'form.type.email' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\EmailType A Symfony\Component\Form\Extension\Core\Type\EmailType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\EmailType
      *
      * @deprecated The "form.type.email" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1733,12 +1542,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.entity' service.
+     * Gets the public 'form.type.entity' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Doctrine\Form\Type\EntityType A Symfony\Bridge\Doctrine\Form\Type\EntityType instance
+     * @return \Symfony\Bridge\Doctrine\Form\Type\EntityType
      */
     protected function getForm_Type_EntityService()
     {
@@ -1746,12 +1552,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.file' service.
+     * Gets the public 'form.type.file' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\FileType A Symfony\Component\Form\Extension\Core\Type\FileType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\FileType
      *
      * @deprecated The "form.type.file" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1763,12 +1566,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.form' service.
+     * Gets the public 'form.type.form' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\FormType A Symfony\Component\Form\Extension\Core\Type\FormType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\FormType
      */
     protected function getForm_Type_FormService()
     {
@@ -1776,12 +1576,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.hidden' service.
+     * Gets the public 'form.type.hidden' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\HiddenType A Symfony\Component\Form\Extension\Core\Type\HiddenType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\HiddenType
      *
      * @deprecated The "form.type.hidden" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1793,12 +1590,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.integer' service.
+     * Gets the public 'form.type.integer' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\IntegerType A Symfony\Component\Form\Extension\Core\Type\IntegerType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\IntegerType
      *
      * @deprecated The "form.type.integer" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1810,12 +1604,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.language' service.
+     * Gets the public 'form.type.language' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\LanguageType A Symfony\Component\Form\Extension\Core\Type\LanguageType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\LanguageType
      *
      * @deprecated The "form.type.language" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1827,12 +1618,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.locale' service.
+     * Gets the public 'form.type.locale' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\LocaleType A Symfony\Component\Form\Extension\Core\Type\LocaleType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\LocaleType
      *
      * @deprecated The "form.type.locale" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1844,12 +1632,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.money' service.
+     * Gets the public 'form.type.money' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\MoneyType A Symfony\Component\Form\Extension\Core\Type\MoneyType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\MoneyType
      *
      * @deprecated The "form.type.money" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1861,12 +1646,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.number' service.
+     * Gets the public 'form.type.number' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\NumberType A Symfony\Component\Form\Extension\Core\Type\NumberType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\NumberType
      *
      * @deprecated The "form.type.number" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1878,12 +1660,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.password' service.
+     * Gets the public 'form.type.password' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\PasswordType A Symfony\Component\Form\Extension\Core\Type\PasswordType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\PasswordType
      *
      * @deprecated The "form.type.password" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1895,12 +1674,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.percent' service.
+     * Gets the public 'form.type.percent' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\PercentType A Symfony\Component\Form\Extension\Core\Type\PercentType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\PercentType
      *
      * @deprecated The "form.type.percent" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1912,12 +1688,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.radio' service.
+     * Gets the public 'form.type.radio' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\RadioType A Symfony\Component\Form\Extension\Core\Type\RadioType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\RadioType
      *
      * @deprecated The "form.type.radio" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1929,12 +1702,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.range' service.
+     * Gets the public 'form.type.range' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\RangeType A Symfony\Component\Form\Extension\Core\Type\RangeType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\RangeType
      *
      * @deprecated The "form.type.range" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1946,12 +1716,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.repeated' service.
+     * Gets the public 'form.type.repeated' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\RepeatedType A Symfony\Component\Form\Extension\Core\Type\RepeatedType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\RepeatedType
      *
      * @deprecated The "form.type.repeated" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1963,12 +1730,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.reset' service.
+     * Gets the public 'form.type.reset' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\ResetType A Symfony\Component\Form\Extension\Core\Type\ResetType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\ResetType
      *
      * @deprecated The "form.type.reset" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1980,12 +1744,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.search' service.
+     * Gets the public 'form.type.search' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\SearchType A Symfony\Component\Form\Extension\Core\Type\SearchType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\SearchType
      *
      * @deprecated The "form.type.search" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -1997,12 +1758,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.submit' service.
+     * Gets the public 'form.type.submit' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\SubmitType A Symfony\Component\Form\Extension\Core\Type\SubmitType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\SubmitType
      *
      * @deprecated The "form.type.submit" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -2014,12 +1772,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.text' service.
+     * Gets the public 'form.type.text' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\TextType A Symfony\Component\Form\Extension\Core\Type\TextType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\TextType
      *
      * @deprecated The "form.type.text" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -2031,12 +1786,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.textarea' service.
+     * Gets the public 'form.type.textarea' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\TextareaType A Symfony\Component\Form\Extension\Core\Type\TextareaType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\TextareaType
      *
      * @deprecated The "form.type.textarea" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -2048,12 +1800,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.time' service.
+     * Gets the public 'form.type.time' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\TimeType A Symfony\Component\Form\Extension\Core\Type\TimeType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\TimeType
      *
      * @deprecated The "form.type.time" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -2065,12 +1814,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.timezone' service.
+     * Gets the public 'form.type.timezone' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\TimezoneType A Symfony\Component\Form\Extension\Core\Type\TimezoneType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\TimezoneType
      *
      * @deprecated The "form.type.timezone" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -2082,12 +1828,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type.url' service.
+     * Gets the public 'form.type.url' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Core\Type\UrlType A Symfony\Component\Form\Extension\Core\Type\UrlType instance
+     * @return \Symfony\Component\Form\Extension\Core\Type\UrlType
      *
      * @deprecated The "form.type.url" service is deprecated since Symfony 3.1 and will be removed in 4.0.
      */
@@ -2099,12 +1842,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type_extension.csrf' service.
+     * Gets the public 'form.type_extension.csrf' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Csrf\Type\FormTypeCsrfExtension A Symfony\Component\Form\Extension\Csrf\Type\FormTypeCsrfExtension instance
+     * @return \Symfony\Component\Form\Extension\Csrf\Type\FormTypeCsrfExtension
      */
     protected function getForm_TypeExtension_CsrfService()
     {
@@ -2112,12 +1852,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type_extension.form.data_collector' service.
+     * Gets the public 'form.type_extension.form.data_collector' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\DataCollector\Type\DataCollectorTypeExtension A Symfony\Component\Form\Extension\DataCollector\Type\DataCollectorTypeExtension instance
+     * @return \Symfony\Component\Form\Extension\DataCollector\Type\DataCollectorTypeExtension
      */
     protected function getForm_TypeExtension_Form_DataCollectorService()
     {
@@ -2125,12 +1862,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type_extension.form.http_foundation' service.
+     * Gets the public 'form.type_extension.form.http_foundation' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\HttpFoundation\Type\FormTypeHttpFoundationExtension A Symfony\Component\Form\Extension\HttpFoundation\Type\FormTypeHttpFoundationExtension instance
+     * @return \Symfony\Component\Form\Extension\HttpFoundation\Type\FormTypeHttpFoundationExtension
      */
     protected function getForm_TypeExtension_Form_HttpFoundationService()
     {
@@ -2138,12 +1872,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type_extension.form.validator' service.
+     * Gets the public 'form.type_extension.form.validator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension A Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension instance
+     * @return \Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension
      */
     protected function getForm_TypeExtension_Form_ValidatorService()
     {
@@ -2151,12 +1882,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type_extension.repeated.validator' service.
+     * Gets the public 'form.type_extension.repeated.validator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Validator\Type\RepeatedTypeValidatorExtension A Symfony\Component\Form\Extension\Validator\Type\RepeatedTypeValidatorExtension instance
+     * @return \Symfony\Component\Form\Extension\Validator\Type\RepeatedTypeValidatorExtension
      */
     protected function getForm_TypeExtension_Repeated_ValidatorService()
     {
@@ -2164,12 +1892,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type_extension.submit.validator' service.
+     * Gets the public 'form.type_extension.submit.validator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Validator\Type\SubmitTypeValidatorExtension A Symfony\Component\Form\Extension\Validator\Type\SubmitTypeValidatorExtension instance
+     * @return \Symfony\Component\Form\Extension\Validator\Type\SubmitTypeValidatorExtension
      */
     protected function getForm_TypeExtension_Submit_ValidatorService()
     {
@@ -2177,12 +1902,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type_extension.upload.validator' service.
+     * Gets the public 'form.type_extension.upload.validator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Validator\Type\UploadValidatorExtension A Symfony\Component\Form\Extension\Validator\Type\UploadValidatorExtension instance
+     * @return \Symfony\Component\Form\Extension\Validator\Type\UploadValidatorExtension
      */
     protected function getForm_TypeExtension_Upload_ValidatorService()
     {
@@ -2190,12 +1912,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type_guesser.doctrine' service.
+     * Gets the public 'form.type_guesser.doctrine' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Doctrine\Form\DoctrineOrmTypeGuesser A Symfony\Bridge\Doctrine\Form\DoctrineOrmTypeGuesser instance
+     * @return \Symfony\Bridge\Doctrine\Form\DoctrineOrmTypeGuesser
      */
     protected function getForm_TypeGuesser_DoctrineService()
     {
@@ -2203,12 +1922,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.type_guesser.validator' service.
+     * Gets the public 'form.type_guesser.validator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Form\Extension\Validator\ValidatorTypeGuesser A Symfony\Component\Form\Extension\Validator\ValidatorTypeGuesser instance
+     * @return \Symfony\Component\Form\Extension\Validator\ValidatorTypeGuesser
      */
     protected function getForm_TypeGuesser_ValidatorService()
     {
@@ -2216,12 +1932,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.change_password.controller' service.
+     * Gets the public 'fos_user.change_password.controller' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Controller\ChangePasswordController A FOS\UserBundle\Controller\ChangePasswordController instance
+     * @return \FOS\UserBundle\Controller\ChangePasswordController
      */
     protected function getFosUser_ChangePassword_ControllerService()
     {
@@ -2233,12 +1946,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.change_password.form.factory' service.
+     * Gets the public 'fos_user.change_password.form.factory' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Form\Factory\FormFactory A FOS\UserBundle\Form\Factory\FormFactory instance
+     * @return \FOS\UserBundle\Form\Factory\FormFactory
      */
     protected function getFosUser_ChangePassword_Form_FactoryService()
     {
@@ -2246,12 +1956,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.change_password.form.type' service.
+     * Gets the public 'fos_user.change_password.form.type' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Form\Type\ChangePasswordFormType A FOS\UserBundle\Form\Type\ChangePasswordFormType instance
+     * @return \FOS\UserBundle\Form\Type\ChangePasswordFormType
      */
     protected function getFosUser_ChangePassword_Form_TypeService()
     {
@@ -2259,12 +1966,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.command.activate_user' service.
+     * Gets the public 'fos_user.command.activate_user' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Command\ActivateUserCommand A FOS\UserBundle\Command\ActivateUserCommand instance
+     * @return \FOS\UserBundle\Command\ActivateUserCommand
      */
     protected function getFosUser_Command_ActivateUserService()
     {
@@ -2272,12 +1976,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.command.change_password' service.
+     * Gets the public 'fos_user.command.change_password' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Command\ChangePasswordCommand A FOS\UserBundle\Command\ChangePasswordCommand instance
+     * @return \FOS\UserBundle\Command\ChangePasswordCommand
      */
     protected function getFosUser_Command_ChangePasswordService()
     {
@@ -2285,12 +1986,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.command.create_user' service.
+     * Gets the public 'fos_user.command.create_user' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Command\CreateUserCommand A FOS\UserBundle\Command\CreateUserCommand instance
+     * @return \FOS\UserBundle\Command\CreateUserCommand
      */
     protected function getFosUser_Command_CreateUserService()
     {
@@ -2298,12 +1996,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.command.deactivate_user' service.
+     * Gets the public 'fos_user.command.deactivate_user' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Command\DeactivateUserCommand A FOS\UserBundle\Command\DeactivateUserCommand instance
+     * @return \FOS\UserBundle\Command\DeactivateUserCommand
      */
     protected function getFosUser_Command_DeactivateUserService()
     {
@@ -2311,12 +2006,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.command.demote_user' service.
+     * Gets the public 'fos_user.command.demote_user' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Command\DemoteUserCommand A FOS\UserBundle\Command\DemoteUserCommand instance
+     * @return \FOS\UserBundle\Command\DemoteUserCommand
      */
     protected function getFosUser_Command_DemoteUserService()
     {
@@ -2324,12 +2016,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.command.promote_user' service.
+     * Gets the public 'fos_user.command.promote_user' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Command\PromoteUserCommand A FOS\UserBundle\Command\PromoteUserCommand instance
+     * @return \FOS\UserBundle\Command\PromoteUserCommand
      */
     protected function getFosUser_Command_PromoteUserService()
     {
@@ -2337,12 +2026,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.listener.authentication' service.
+     * Gets the public 'fos_user.listener.authentication' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\EventListener\AuthenticationListener A FOS\UserBundle\EventListener\AuthenticationListener instance
+     * @return \FOS\UserBundle\EventListener\AuthenticationListener
      */
     protected function getFosUser_Listener_AuthenticationService()
     {
@@ -2350,12 +2036,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.listener.flash' service.
+     * Gets the public 'fos_user.listener.flash' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\EventListener\FlashListener A FOS\UserBundle\EventListener\FlashListener instance
+     * @return \FOS\UserBundle\EventListener\FlashListener
      */
     protected function getFosUser_Listener_FlashService()
     {
@@ -2363,12 +2046,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.listener.resetting' service.
+     * Gets the public 'fos_user.listener.resetting' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\EventListener\ResettingListener A FOS\UserBundle\EventListener\ResettingListener instance
+     * @return \FOS\UserBundle\EventListener\ResettingListener
      */
     protected function getFosUser_Listener_ResettingService()
     {
@@ -2376,12 +2056,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.mailer' service.
+     * Gets the public 'fos_user.mailer' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Mailer\Mailer A FOS\UserBundle\Mailer\Mailer instance
+     * @return \FOS\UserBundle\Mailer\Mailer
      */
     protected function getFosUser_MailerService()
     {
@@ -2389,12 +2066,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.profile.controller' service.
+     * Gets the public 'fos_user.profile.controller' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Controller\ProfileController A FOS\UserBundle\Controller\ProfileController instance
+     * @return \FOS\UserBundle\Controller\ProfileController
      */
     protected function getFosUser_Profile_ControllerService()
     {
@@ -2406,12 +2080,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.profile.form.factory' service.
+     * Gets the public 'fos_user.profile.form.factory' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Form\Factory\FormFactory A FOS\UserBundle\Form\Factory\FormFactory instance
+     * @return \FOS\UserBundle\Form\Factory\FormFactory
      */
     protected function getFosUser_Profile_Form_FactoryService()
     {
@@ -2419,12 +2090,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.profile.form.type' service.
+     * Gets the public 'fos_user.profile.form.type' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Form\Type\ProfileFormType A FOS\UserBundle\Form\Type\ProfileFormType instance
+     * @return \FOS\UserBundle\Form\Type\ProfileFormType
      */
     protected function getFosUser_Profile_Form_TypeService()
     {
@@ -2432,12 +2100,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.registration.controller' service.
+     * Gets the public 'fos_user.registration.controller' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Controller\RegistrationController A FOS\UserBundle\Controller\RegistrationController instance
+     * @return \FOS\UserBundle\Controller\RegistrationController
      */
     protected function getFosUser_Registration_ControllerService()
     {
@@ -2449,12 +2114,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.registration.form.factory' service.
+     * Gets the public 'fos_user.registration.form.factory' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Form\Factory\FormFactory A FOS\UserBundle\Form\Factory\FormFactory instance
+     * @return \FOS\UserBundle\Form\Factory\FormFactory
      */
     protected function getFosUser_Registration_Form_FactoryService()
     {
@@ -2462,12 +2124,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.registration.form.type' service.
+     * Gets the public 'fos_user.registration.form.type' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Form\Type\RegistrationFormType A FOS\UserBundle\Form\Type\RegistrationFormType instance
+     * @return \FOS\UserBundle\Form\Type\RegistrationFormType
      */
     protected function getFosUser_Registration_Form_TypeService()
     {
@@ -2475,12 +2134,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.resetting.controller' service.
+     * Gets the public 'fos_user.resetting.controller' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Controller\ResettingController A FOS\UserBundle\Controller\ResettingController instance
+     * @return \FOS\UserBundle\Controller\ResettingController
      */
     protected function getFosUser_Resetting_ControllerService()
     {
@@ -2492,12 +2148,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.resetting.form.factory' service.
+     * Gets the public 'fos_user.resetting.form.factory' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Form\Factory\FormFactory A FOS\UserBundle\Form\Factory\FormFactory instance
+     * @return \FOS\UserBundle\Form\Factory\FormFactory
      */
     protected function getFosUser_Resetting_Form_FactoryService()
     {
@@ -2505,12 +2158,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.resetting.form.type' service.
+     * Gets the public 'fos_user.resetting.form.type' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Form\Type\ResettingFormType A FOS\UserBundle\Form\Type\ResettingFormType instance
+     * @return \FOS\UserBundle\Form\Type\ResettingFormType
      */
     protected function getFosUser_Resetting_Form_TypeService()
     {
@@ -2518,12 +2168,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.security.controller' service.
+     * Gets the public 'fos_user.security.controller' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Controller\SecurityController A FOS\UserBundle\Controller\SecurityController instance
+     * @return \FOS\UserBundle\Controller\SecurityController
      */
     protected function getFosUser_Security_ControllerService()
     {
@@ -2535,12 +2182,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.security.interactive_login_listener' service.
+     * Gets the public 'fos_user.security.interactive_login_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\EventListener\LastLoginListener A FOS\UserBundle\EventListener\LastLoginListener instance
+     * @return \FOS\UserBundle\EventListener\LastLoginListener
      */
     protected function getFosUser_Security_InteractiveLoginListenerService()
     {
@@ -2548,12 +2192,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.security.login_manager' service.
+     * Gets the public 'fos_user.security.login_manager' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Security\LoginManager A FOS\UserBundle\Security\LoginManager instance
+     * @return \FOS\UserBundle\Security\LoginManager
      */
     protected function getFosUser_Security_LoginManagerService()
     {
@@ -2561,12 +2202,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.user_manager' service.
+     * Gets the public 'fos_user.user_manager' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Doctrine\UserManager A FOS\UserBundle\Doctrine\UserManager instance
+     * @return \FOS\UserBundle\Doctrine\UserManager
      */
     protected function getFosUser_UserManagerService()
     {
@@ -2574,12 +2212,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.username_form_type' service.
+     * Gets the public 'fos_user.username_form_type' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Form\Type\UsernameFormType A FOS\UserBundle\Form\Type\UsernameFormType instance
+     * @return \FOS\UserBundle\Form\Type\UsernameFormType
      */
     protected function getFosUser_UsernameFormTypeService()
     {
@@ -2587,12 +2222,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.util.email_canonicalizer' service.
+     * Gets the public 'fos_user.util.email_canonicalizer' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Util\Canonicalizer A FOS\UserBundle\Util\Canonicalizer instance
+     * @return \FOS\UserBundle\Util\Canonicalizer
      */
     protected function getFosUser_Util_EmailCanonicalizerService()
     {
@@ -2600,12 +2232,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.util.token_generator' service.
+     * Gets the public 'fos_user.util.token_generator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Util\TokenGenerator A FOS\UserBundle\Util\TokenGenerator instance
+     * @return \FOS\UserBundle\Util\TokenGenerator
      */
     protected function getFosUser_Util_TokenGeneratorService()
     {
@@ -2613,12 +2242,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.util.user_manipulator' service.
+     * Gets the public 'fos_user.util.user_manipulator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \FOS\UserBundle\Util\UserManipulator A FOS\UserBundle\Util\UserManipulator instance
+     * @return \FOS\UserBundle\Util\UserManipulator
      */
     protected function getFosUser_Util_UserManipulatorService()
     {
@@ -2626,12 +2252,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fragment.handler' service.
+     * Gets the public 'fragment.handler' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\DependencyInjection\LazyLoadingFragmentHandler A Symfony\Component\HttpKernel\DependencyInjection\LazyLoadingFragmentHandler instance
+     * @return \Symfony\Component\HttpKernel\DependencyInjection\LazyLoadingFragmentHandler
      */
     protected function getFragment_HandlerService()
     {
@@ -2647,12 +2270,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fragment.listener' service.
+     * Gets the public 'fragment.listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\EventListener\FragmentListener A Symfony\Component\HttpKernel\EventListener\FragmentListener instance
+     * @return \Symfony\Component\HttpKernel\EventListener\FragmentListener
      */
     protected function getFragment_ListenerService()
     {
@@ -2660,12 +2280,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fragment.renderer.esi' service.
+     * Gets the public 'fragment.renderer.esi' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\Fragment\EsiFragmentRenderer A Symfony\Component\HttpKernel\Fragment\EsiFragmentRenderer instance
+     * @return \Symfony\Component\HttpKernel\Fragment\EsiFragmentRenderer
      */
     protected function getFragment_Renderer_EsiService()
     {
@@ -2677,12 +2294,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fragment.renderer.hinclude' service.
+     * Gets the public 'fragment.renderer.hinclude' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\Fragment\HIncludeFragmentRenderer A Symfony\Component\HttpKernel\Fragment\HIncludeFragmentRenderer instance
+     * @return \Symfony\Component\HttpKernel\Fragment\HIncludeFragmentRenderer
      */
     protected function getFragment_Renderer_HincludeService()
     {
@@ -2694,12 +2308,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fragment.renderer.inline' service.
+     * Gets the public 'fragment.renderer.inline' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\Fragment\InlineFragmentRenderer A Symfony\Component\HttpKernel\Fragment\InlineFragmentRenderer instance
+     * @return \Symfony\Component\HttpKernel\Fragment\InlineFragmentRenderer
      */
     protected function getFragment_Renderer_InlineService()
     {
@@ -2711,12 +2322,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fragment.renderer.ssi' service.
+     * Gets the public 'fragment.renderer.ssi' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\Fragment\SsiFragmentRenderer A Symfony\Component\HttpKernel\Fragment\SsiFragmentRenderer instance
+     * @return \Symfony\Component\HttpKernel\Fragment\SsiFragmentRenderer
      */
     protected function getFragment_Renderer_SsiService()
     {
@@ -2728,12 +2336,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'http_kernel' service.
+     * Gets the public 'http_kernel' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\HttpKernel A Symfony\Component\HttpKernel\HttpKernel instance
+     * @return \Symfony\Component\HttpKernel\HttpKernel
      */
     protected function getHttpKernelService()
     {
@@ -2741,10 +2346,7 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'kernel' service.
-     *
-     * This service is shared.
-     * This method always returns the same instance of the service.
+     * Gets the public 'kernel' shared service.
      *
      * @throws RuntimeException always since this service is expected to be injected dynamically
      */
@@ -2754,12 +2356,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'kernel.class_cache.cache_warmer' service.
+     * Gets the public 'kernel.class_cache.cache_warmer' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\CacheWarmer\ClassCacheCacheWarmer A Symfony\Bundle\FrameworkBundle\CacheWarmer\ClassCacheCacheWarmer instance
+     * @return \Symfony\Bundle\FrameworkBundle\CacheWarmer\ClassCacheCacheWarmer
      */
     protected function getKernel_ClassCache_CacheWarmerService()
     {
@@ -2767,12 +2366,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'knp_menu.factory' service.
+     * Gets the public 'knp_menu.factory' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Knp\Menu\MenuFactory A Knp\Menu\MenuFactory instance
+     * @return \Knp\Menu\MenuFactory
      */
     protected function getKnpMenu_FactoryService()
     {
@@ -2784,12 +2380,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'knp_menu.matcher' service.
+     * Gets the public 'knp_menu.matcher' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Knp\Menu\Matcher\Matcher A Knp\Menu\Matcher\Matcher instance
+     * @return \Knp\Menu\Matcher\Matcher
      */
     protected function getKnpMenu_MatcherService()
     {
@@ -2797,12 +2390,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'knp_menu.menu_provider' service.
+     * Gets the public 'knp_menu.menu_provider' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Knp\Menu\Provider\ChainProvider A Knp\Menu\Provider\ChainProvider instance
+     * @return \Knp\Menu\Provider\ChainProvider
      */
     protected function getKnpMenu_MenuProviderService()
     {
@@ -2812,12 +2402,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'knp_menu.renderer.list' service.
+     * Gets the public 'knp_menu.renderer.list' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Knp\Menu\Renderer\ListRenderer A Knp\Menu\Renderer\ListRenderer instance
+     * @return \Knp\Menu\Renderer\ListRenderer
      */
     protected function getKnpMenu_Renderer_ListService()
     {
@@ -2825,12 +2412,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'knp_menu.renderer.twig' service.
+     * Gets the public 'knp_menu.renderer.twig' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Knp\Menu\Renderer\TwigRenderer A Knp\Menu\Renderer\TwigRenderer instance
+     * @return \Knp\Menu\Renderer\TwigRenderer
      */
     protected function getKnpMenu_Renderer_TwigService()
     {
@@ -2838,12 +2422,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'knp_menu.renderer_provider' service.
+     * Gets the public 'knp_menu.renderer_provider' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Knp\Bundle\MenuBundle\Renderer\ContainerAwareProvider A Knp\Bundle\MenuBundle\Renderer\ContainerAwareProvider instance
+     * @return \Knp\Bundle\MenuBundle\Renderer\ContainerAwareProvider
      */
     protected function getKnpMenu_RendererProviderService()
     {
@@ -2851,12 +2432,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'knp_menu.voter.router' service.
+     * Gets the public 'knp_menu.voter.router' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Knp\Menu\Matcher\Voter\RouteVoter A Knp\Menu\Matcher\Voter\RouteVoter instance
+     * @return \Knp\Menu\Matcher\Voter\RouteVoter
      */
     protected function getKnpMenu_Voter_RouterService()
     {
@@ -2864,12 +2442,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'lexik\bundle\jwtauthenticationbundle\services\jwsprovider\jwsproviderinterface' service.
+     * Gets the public 'lexik\bundle\jwtauthenticationbundle\services\jwsprovider\jwsproviderinterface' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\DefaultJWSProvider A Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\DefaultJWSProvider instance
+     * @return \Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\DefaultJWSProvider
      */
     protected function getLexik_Bundle_Jwtauthenticationbundle_Services_Jwsprovider_JwsproviderinterfaceService()
     {
@@ -2877,12 +2452,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'lexik\bundle\jwtauthenticationbundle\tokenextractor\tokenextractorinterface' service.
+     * Gets the public 'lexik\bundle\jwtauthenticationbundle\tokenextractor\tokenextractorinterface' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\ChainTokenExtractor A Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\ChainTokenExtractor instance
+     * @return \Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\ChainTokenExtractor
      */
     protected function getLexik_Bundle_Jwtauthenticationbundle_Tokenextractor_TokenextractorinterfaceService()
     {
@@ -2890,12 +2462,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'lexik_jwt_authentication.check_config_command' service.
+     * Gets the public 'lexik_jwt_authentication.check_config_command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Lexik\Bundle\JWTAuthenticationBundle\Command\CheckConfigCommand A Lexik\Bundle\JWTAuthenticationBundle\Command\CheckConfigCommand instance
+     * @return \Lexik\Bundle\JWTAuthenticationBundle\Command\CheckConfigCommand
      */
     protected function getLexikJwtAuthentication_CheckConfigCommandService()
     {
@@ -2903,12 +2472,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'lexik_jwt_authentication.encoder.default' service.
+     * Gets the public 'lexik_jwt_authentication.encoder.default' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Lexik\Bundle\JWTAuthenticationBundle\Encoder\DefaultEncoder A Lexik\Bundle\JWTAuthenticationBundle\Encoder\DefaultEncoder instance
+     * @return \Lexik\Bundle\JWTAuthenticationBundle\Encoder\DefaultEncoder
      */
     protected function getLexikJwtAuthentication_Encoder_DefaultService()
     {
@@ -2916,12 +2482,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'lexik_jwt_authentication.extractor.authorization_header_extractor' service.
+     * Gets the public 'lexik_jwt_authentication.extractor.authorization_header_extractor' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor A Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor instance
+     * @return \Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor
      */
     protected function getLexikJwtAuthentication_Extractor_AuthorizationHeaderExtractorService()
     {
@@ -2929,12 +2492,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'lexik_jwt_authentication.extractor.cookie_extractor' service.
+     * Gets the public 'lexik_jwt_authentication.extractor.cookie_extractor' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\CookieTokenExtractor A Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\CookieTokenExtractor instance
+     * @return \Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\CookieTokenExtractor
      */
     protected function getLexikJwtAuthentication_Extractor_CookieExtractorService()
     {
@@ -2942,12 +2502,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'lexik_jwt_authentication.extractor.query_parameter_extractor' service.
+     * Gets the public 'lexik_jwt_authentication.extractor.query_parameter_extractor' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\QueryParameterTokenExtractor A Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\QueryParameterTokenExtractor instance
+     * @return \Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\QueryParameterTokenExtractor
      */
     protected function getLexikJwtAuthentication_Extractor_QueryParameterExtractorService()
     {
@@ -2955,12 +2512,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'lexik_jwt_authentication.handler.authentication_failure' service.
+     * Gets the public 'lexik_jwt_authentication.handler.authentication_failure' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Lexik\Bundle\JWTAuthenticationBundle\Security\Http\Authentication\AuthenticationFailureHandler A Lexik\Bundle\JWTAuthenticationBundle\Security\Http\Authentication\AuthenticationFailureHandler instance
+     * @return \Lexik\Bundle\JWTAuthenticationBundle\Security\Http\Authentication\AuthenticationFailureHandler
      */
     protected function getLexikJwtAuthentication_Handler_AuthenticationFailureService()
     {
@@ -2968,12 +2522,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'lexik_jwt_authentication.handler.authentication_success' service.
+     * Gets the public 'lexik_jwt_authentication.handler.authentication_success' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Lexik\Bundle\JWTAuthenticationBundle\Security\Http\Authentication\AuthenticationSuccessHandler A Lexik\Bundle\JWTAuthenticationBundle\Security\Http\Authentication\AuthenticationSuccessHandler instance
+     * @return \Lexik\Bundle\JWTAuthenticationBundle\Security\Http\Authentication\AuthenticationSuccessHandler
      */
     protected function getLexikJwtAuthentication_Handler_AuthenticationSuccessService()
     {
@@ -2981,12 +2532,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'lexik_jwt_authentication.jwt_manager' service.
+     * Gets the public 'lexik_jwt_authentication.jwt_manager' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager A Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager instance
+     * @return \Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager
      */
     protected function getLexikJwtAuthentication_JwtManagerService()
     {
@@ -2998,12 +2546,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'lexik_jwt_authentication.key_loader' service.
+     * Gets the public 'lexik_jwt_authentication.key_loader' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Lexik\Bundle\JWTAuthenticationBundle\Services\KeyLoader\OpenSSLKeyLoader A Lexik\Bundle\JWTAuthenticationBundle\Services\KeyLoader\OpenSSLKeyLoader instance
+     * @return \Lexik\Bundle\JWTAuthenticationBundle\Services\KeyLoader\OpenSSLKeyLoader
      */
     protected function getLexikJwtAuthentication_KeyLoaderService()
     {
@@ -3011,12 +2556,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'lexik_jwt_authentication.security.guard.jwt_token_authenticator' service.
+     * Gets the public 'lexik_jwt_authentication.security.guard.jwt_token_authenticator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Lexik\Bundle\JWTAuthenticationBundle\Security\Guard\JWTTokenAuthenticator A Lexik\Bundle\JWTAuthenticationBundle\Security\Guard\JWTTokenAuthenticator instance
+     * @return \Lexik\Bundle\JWTAuthenticationBundle\Security\Guard\JWTTokenAuthenticator
      */
     protected function getLexikJwtAuthentication_Security_Guard_JwtTokenAuthenticatorService()
     {
@@ -3024,12 +2566,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'locale_listener' service.
+     * Gets the public 'locale_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\EventListener\LocaleListener A Symfony\Component\HttpKernel\EventListener\LocaleListener instance
+     * @return \Symfony\Component\HttpKernel\EventListener\LocaleListener
      */
     protected function getLocaleListenerService()
     {
@@ -3037,12 +2576,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'logger' service.
+     * Gets the public 'logger' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Monolog\Logger A Symfony\Bridge\Monolog\Logger instance
+     * @return \Symfony\Bridge\Monolog\Logger
      */
     protected function getLoggerService()
     {
@@ -3057,12 +2593,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'monolog.handler.console' service.
+     * Gets the public 'monolog.handler.console' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Monolog\Handler\ConsoleHandler A Symfony\Bridge\Monolog\Handler\ConsoleHandler instance
+     * @return \Symfony\Bridge\Monolog\Handler\ConsoleHandler
      */
     protected function getMonolog_Handler_ConsoleService()
     {
@@ -3074,12 +2607,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'monolog.handler.main' service.
+     * Gets the public 'monolog.handler.main' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Monolog\Handler\StreamHandler A Monolog\Handler\StreamHandler instance
+     * @return \Monolog\Handler\StreamHandler
      */
     protected function getMonolog_Handler_MainService()
     {
@@ -3091,12 +2621,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'monolog.handler.null_internal' service.
+     * Gets the public 'monolog.handler.null_internal' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Monolog\Handler\NullHandler A Monolog\Handler\NullHandler instance
+     * @return \Monolog\Handler\NullHandler
      */
     protected function getMonolog_Handler_NullInternalService()
     {
@@ -3104,12 +2631,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'monolog.logger.cache' service.
+     * Gets the public 'monolog.logger.cache' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Monolog\Logger A Symfony\Bridge\Monolog\Logger instance
+     * @return \Symfony\Bridge\Monolog\Logger
      */
     protected function getMonolog_Logger_CacheService()
     {
@@ -3123,12 +2647,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'monolog.logger.doctrine' service.
+     * Gets the public 'monolog.logger.doctrine' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Monolog\Logger A Symfony\Bridge\Monolog\Logger instance
+     * @return \Symfony\Bridge\Monolog\Logger
      */
     protected function getMonolog_Logger_DoctrineService()
     {
@@ -3141,12 +2662,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'monolog.logger.event' service.
+     * Gets the public 'monolog.logger.event' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Monolog\Logger A Symfony\Bridge\Monolog\Logger instance
+     * @return \Symfony\Bridge\Monolog\Logger
      */
     protected function getMonolog_Logger_EventService()
     {
@@ -3159,12 +2677,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'monolog.logger.php' service.
+     * Gets the public 'monolog.logger.php' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Monolog\Logger A Symfony\Bridge\Monolog\Logger instance
+     * @return \Symfony\Bridge\Monolog\Logger
      */
     protected function getMonolog_Logger_PhpService()
     {
@@ -3178,12 +2693,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'monolog.logger.profiler' service.
+     * Gets the public 'monolog.logger.profiler' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Monolog\Logger A Symfony\Bridge\Monolog\Logger instance
+     * @return \Symfony\Bridge\Monolog\Logger
      */
     protected function getMonolog_Logger_ProfilerService()
     {
@@ -3197,12 +2709,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'monolog.logger.request' service.
+     * Gets the public 'monolog.logger.request' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Monolog\Logger A Symfony\Bridge\Monolog\Logger instance
+     * @return \Symfony\Bridge\Monolog\Logger
      */
     protected function getMonolog_Logger_RequestService()
     {
@@ -3216,12 +2725,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'monolog.logger.router' service.
+     * Gets the public 'monolog.logger.router' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Monolog\Logger A Symfony\Bridge\Monolog\Logger instance
+     * @return \Symfony\Bridge\Monolog\Logger
      */
     protected function getMonolog_Logger_RouterService()
     {
@@ -3235,12 +2741,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'monolog.logger.security' service.
+     * Gets the public 'monolog.logger.security' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Monolog\Logger A Symfony\Bridge\Monolog\Logger instance
+     * @return \Symfony\Bridge\Monolog\Logger
      */
     protected function getMonolog_Logger_SecurityService()
     {
@@ -3254,12 +2757,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'monolog.logger.templating' service.
+     * Gets the public 'monolog.logger.templating' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Monolog\Logger A Symfony\Bridge\Monolog\Logger instance
+     * @return \Symfony\Bridge\Monolog\Logger
      */
     protected function getMonolog_Logger_TemplatingService()
     {
@@ -3273,12 +2773,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'monolog.logger.translation' service.
+     * Gets the public 'monolog.logger.translation' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Monolog\Logger A Symfony\Bridge\Monolog\Logger instance
+     * @return \Symfony\Bridge\Monolog\Logger
      */
     protected function getMonolog_Logger_TranslationService()
     {
@@ -3292,12 +2789,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'profiler' service.
+     * Gets the public 'profiler' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\Profiler\Profiler A Symfony\Component\HttpKernel\Profiler\Profiler instance
+     * @return \Symfony\Component\HttpKernel\Profiler\Profiler
      */
     protected function getProfilerService()
     {
@@ -3336,12 +2830,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'profiler_listener' service.
+     * Gets the public 'profiler_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\EventListener\ProfilerListener A Symfony\Component\HttpKernel\EventListener\ProfilerListener instance
+     * @return \Symfony\Component\HttpKernel\EventListener\ProfilerListener
      */
     protected function getProfilerListenerService()
     {
@@ -3349,12 +2840,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'property_accessor' service.
+     * Gets the public 'property_accessor' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\PropertyAccess\PropertyAccessor A Symfony\Component\PropertyAccess\PropertyAccessor instance
+     * @return \Symfony\Component\PropertyAccess\PropertyAccessor
      */
     protected function getPropertyAccessorService()
     {
@@ -3362,12 +2850,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'request_stack' service.
+     * Gets the public 'request_stack' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpFoundation\RequestStack A Symfony\Component\HttpFoundation\RequestStack instance
+     * @return \Symfony\Component\HttpFoundation\RequestStack
      */
     protected function getRequestStackService()
     {
@@ -3375,12 +2860,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'response_listener' service.
+     * Gets the public 'response_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\EventListener\ResponseListener A Symfony\Component\HttpKernel\EventListener\ResponseListener instance
+     * @return \Symfony\Component\HttpKernel\EventListener\ResponseListener
      */
     protected function getResponseListenerService()
     {
@@ -3388,12 +2870,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'router' service.
+     * Gets the public 'router' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Routing\Router A Symfony\Bundle\FrameworkBundle\Routing\Router instance
+     * @return \Symfony\Bundle\FrameworkBundle\Routing\Router
      */
     protected function getRouterService()
     {
@@ -3405,12 +2884,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'router_listener' service.
+     * Gets the public 'router_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\EventListener\RouterListener A Symfony\Component\HttpKernel\EventListener\RouterListener instance
+     * @return \Symfony\Component\HttpKernel\EventListener\RouterListener
      */
     protected function getRouterListenerService()
     {
@@ -3418,12 +2894,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'routing.loader' service.
+     * Gets the public 'routing.loader' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Routing\DelegatingLoader A Symfony\Bundle\FrameworkBundle\Routing\DelegatingLoader instance
+     * @return \Symfony\Bundle\FrameworkBundle\Routing\DelegatingLoader
      */
     protected function getRouting_LoaderService()
     {
@@ -3447,12 +2920,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.authentication.guard_handler' service.
+     * Gets the public 'security.authentication.guard_handler' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Security\Guard\GuardAuthenticatorHandler A Symfony\Component\Security\Guard\GuardAuthenticatorHandler instance
+     * @return \Symfony\Component\Security\Guard\GuardAuthenticatorHandler
      */
     protected function getSecurity_Authentication_GuardHandlerService()
     {
@@ -3460,12 +2930,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.authentication_utils' service.
+     * Gets the public 'security.authentication_utils' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Security\Http\Authentication\AuthenticationUtils A Symfony\Component\Security\Http\Authentication\AuthenticationUtils instance
+     * @return \Symfony\Component\Security\Http\Authentication\AuthenticationUtils
      */
     protected function getSecurity_AuthenticationUtilsService()
     {
@@ -3473,12 +2940,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.authorization_checker' service.
+     * Gets the public 'security.authorization_checker' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Security\Core\Authorization\AuthorizationChecker A Symfony\Component\Security\Core\Authorization\AuthorizationChecker instance
+     * @return \Symfony\Component\Security\Core\Authorization\AuthorizationChecker
      */
     protected function getSecurity_AuthorizationCheckerService()
     {
@@ -3486,25 +2950,19 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.csrf.token_manager' service.
+     * Gets the public 'security.csrf.token_manager' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Security\Csrf\CsrfTokenManager A Symfony\Component\Security\Csrf\CsrfTokenManager instance
+     * @return \Symfony\Component\Security\Csrf\CsrfTokenManager
      */
     protected function getSecurity_Csrf_TokenManagerService()
     {
-        return $this->services['security.csrf.token_manager'] = new \Symfony\Component\Security\Csrf\CsrfTokenManager(new \Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator(), new \Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage($this->get('session')));
+        return $this->services['security.csrf.token_manager'] = new \Symfony\Component\Security\Csrf\CsrfTokenManager(new \Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator(), new \Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage($this->get('session')), $this->get('request_stack', ContainerInterface::NULL_ON_INVALID_REFERENCE));
     }
 
     /**
-     * Gets the 'security.encoder_factory' service.
+     * Gets the public 'security.encoder_factory' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Security\Core\Encoder\EncoderFactory A Symfony\Component\Security\Core\Encoder\EncoderFactory instance
+     * @return \Symfony\Component\Security\Core\Encoder\EncoderFactory
      */
     protected function getSecurity_EncoderFactoryService()
     {
@@ -3512,12 +2970,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.firewall' service.
+     * Gets the public 'security.firewall' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Security\Http\Firewall A Symfony\Component\Security\Http\Firewall instance
+     * @return \Symfony\Component\Security\Http\Firewall
      */
     protected function getSecurity_FirewallService()
     {
@@ -3525,12 +2980,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.firewall.map.context.api' service.
+     * Gets the public 'security.firewall.map.context.api' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\SecurityBundle\Security\FirewallContext A Symfony\Bundle\SecurityBundle\Security\FirewallContext instance
+     * @return \Symfony\Bundle\SecurityBundle\Security\FirewallContext
      */
     protected function getSecurity_Firewall_Map_Context_ApiService()
     {
@@ -3541,12 +2993,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.firewall.map.context.login' service.
+     * Gets the public 'security.firewall.map.context.login' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\SecurityBundle\Security\FirewallContext A Symfony\Bundle\SecurityBundle\Security\FirewallContext instance
+     * @return \Symfony\Bundle\SecurityBundle\Security\FirewallContext
      */
     protected function getSecurity_Firewall_Map_Context_LoginService()
     {
@@ -3555,16 +3004,13 @@ class appDevDebugProjectContainer extends Container
         $c = ${($_ = isset($this->services['security.http_utils']) ? $this->services['security.http_utils'] : $this->getSecurity_HttpUtilsService()) && false ?: '_'};
         $d = $this->get('monolog.logger.security', ContainerInterface::NULL_ON_INVALID_REFERENCE);
 
-        return $this->services['security.firewall.map.context.login'] = new \Symfony\Bundle\SecurityBundle\Security\FirewallContext(array(0 => ${($_ = isset($this->services['security.channel_listener']) ? $this->services['security.channel_listener'] : $this->getSecurity_ChannelListenerService()) && false ?: '_'}, 1 => new \Symfony\Component\Security\Http\Firewall\UsernamePasswordFormAuthenticationListener($a, $b, ${($_ = isset($this->services['security.authentication.session_strategy']) ? $this->services['security.authentication.session_strategy'] : $this->getSecurity_Authentication_SessionStrategyService()) && false ?: '_'}, $c, 'login', new \Symfony\Component\Security\Http\Authentication\CustomAuthenticationSuccessHandler($this->get('lexik_jwt_authentication.handler.authentication_success'), array('always_use_default_target_path' => false, 'default_target_path' => '/', 'login_path' => '/login', 'target_path_parameter' => '_target_path', 'use_referer' => false), 'login'), new \Symfony\Component\Security\Http\Authentication\CustomAuthenticationFailureHandler($this->get('lexik_jwt_authentication.handler.authentication_failure'), array('login_path' => '/login', 'failure_path' => NULL, 'failure_forward' => false, 'failure_path_parameter' => '_failure_path')), array('check_path' => '/api/login_check', 'require_previous_session' => false, 'use_forward' => false, 'username_parameter' => '_username', 'password_parameter' => '_password', 'csrf_parameter' => '_csrf_token', 'csrf_token_id' => 'authenticate', 'post_only' => true), $d, $this->get('debug.event_dispatcher', ContainerInterface::NULL_ON_INVALID_REFERENCE), NULL), 2 => new \Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener($a, '644147076a6636.35785436', $d, $b), 3 => ${($_ = isset($this->services['security.access_listener']) ? $this->services['security.access_listener'] : $this->getSecurity_AccessListenerService()) && false ?: '_'}), new \Symfony\Component\Security\Http\Firewall\ExceptionListener($a, ${($_ = isset($this->services['security.authentication.trust_resolver']) ? $this->services['security.authentication.trust_resolver'] : $this->getSecurity_Authentication_TrustResolverService()) && false ?: '_'}, $c, 'login', new \Symfony\Component\Security\Http\EntryPoint\FormAuthenticationEntryPoint($this->get('http_kernel'), $c, '/login', false), NULL, NULL, $d, true), new \Symfony\Bundle\SecurityBundle\Security\FirewallConfig('login', 'security.user_checker', 'security.request_matcher.0f5b08f651583fd992ff0203b6568f57f72cdce151a9ae850abcdf65ed2efdf00554c442', true, true, 'fos_user.user_provider.username', NULL, 'security.authentication.form_entry_point.login', NULL, NULL, array(0 => 'form_login', 1 => 'anonymous')));
+        return $this->services['security.firewall.map.context.login'] = new \Symfony\Bundle\SecurityBundle\Security\FirewallContext(array(0 => ${($_ = isset($this->services['security.channel_listener']) ? $this->services['security.channel_listener'] : $this->getSecurity_ChannelListenerService()) && false ?: '_'}, 1 => new \Symfony\Component\Security\Http\Firewall\UsernamePasswordFormAuthenticationListener($a, $b, ${($_ = isset($this->services['security.authentication.session_strategy']) ? $this->services['security.authentication.session_strategy'] : $this->getSecurity_Authentication_SessionStrategyService()) && false ?: '_'}, $c, 'login', new \Symfony\Component\Security\Http\Authentication\CustomAuthenticationSuccessHandler($this->get('lexik_jwt_authentication.handler.authentication_success'), array('always_use_default_target_path' => false, 'default_target_path' => '/', 'login_path' => '/login', 'target_path_parameter' => '_target_path', 'use_referer' => false), 'login'), new \Symfony\Component\Security\Http\Authentication\CustomAuthenticationFailureHandler($this->get('lexik_jwt_authentication.handler.authentication_failure'), array('login_path' => '/login', 'failure_path' => NULL, 'failure_forward' => false, 'failure_path_parameter' => '_failure_path')), array('check_path' => '/api/login_check', 'require_previous_session' => false, 'use_forward' => false, 'username_parameter' => '_username', 'password_parameter' => '_password', 'csrf_parameter' => '_csrf_token', 'csrf_token_id' => 'authenticate', 'post_only' => true), $d, $this->get('debug.event_dispatcher', ContainerInterface::NULL_ON_INVALID_REFERENCE), NULL), 2 => new \Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener($a, '6442955d63a681.81260595', $d, $b), 3 => ${($_ = isset($this->services['security.access_listener']) ? $this->services['security.access_listener'] : $this->getSecurity_AccessListenerService()) && false ?: '_'}), new \Symfony\Component\Security\Http\Firewall\ExceptionListener($a, ${($_ = isset($this->services['security.authentication.trust_resolver']) ? $this->services['security.authentication.trust_resolver'] : $this->getSecurity_Authentication_TrustResolverService()) && false ?: '_'}, $c, 'login', new \Symfony\Component\Security\Http\EntryPoint\FormAuthenticationEntryPoint($this->get('http_kernel'), $c, '/login', false), NULL, NULL, $d, true), new \Symfony\Bundle\SecurityBundle\Security\FirewallConfig('login', 'security.user_checker', 'security.request_matcher.0f5b08f651583fd992ff0203b6568f57f72cdce151a9ae850abcdf65ed2efdf00554c442', true, true, 'fos_user.user_provider.username', NULL, 'security.authentication.form_entry_point.login', NULL, NULL, array(0 => 'form_login', 1 => 'anonymous')));
     }
 
     /**
-     * Gets the 'security.firewall.map.context.main' service.
+     * Gets the public 'security.firewall.map.context.main' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\SecurityBundle\Security\FirewallContext A Symfony\Bundle\SecurityBundle\Security\FirewallContext instance
+     * @return \Symfony\Bundle\SecurityBundle\Security\FirewallContext
      */
     protected function getSecurity_Firewall_Map_Context_MainService()
     {
@@ -3586,16 +3032,13 @@ class appDevDebugProjectContainer extends Container
         $j = new \Symfony\Component\Security\Http\Authentication\DefaultAuthenticationFailureHandler($f, $e, array(), $b);
         $j->setOptions(array('login_path' => '/login', 'failure_path' => NULL, 'failure_forward' => false, 'failure_path_parameter' => '_failure_path'));
 
-        return $this->services['security.firewall.map.context.main'] = new \Symfony\Bundle\SecurityBundle\Security\FirewallContext(array(0 => ${($_ = isset($this->services['security.channel_listener']) ? $this->services['security.channel_listener'] : $this->getSecurity_ChannelListenerService()) && false ?: '_'}, 1 => new \Symfony\Component\Security\Http\Firewall\ContextListener($a, array(0 => ${($_ = isset($this->services['fos_user.user_provider.username']) ? $this->services['fos_user.user_provider.username'] : $this->getFosUser_UserProvider_UsernameService()) && false ?: '_'}), 'main', $b, $c, $d), 2 => $h, 3 => new \Symfony\Component\Security\Http\Firewall\UsernamePasswordFormAuthenticationListener($a, $g, ${($_ = isset($this->services['security.authentication.session_strategy']) ? $this->services['security.authentication.session_strategy'] : $this->getSecurity_Authentication_SessionStrategyService()) && false ?: '_'}, $e, 'main', $i, $j, array('check_path' => '/login_check', 'use_forward' => false, 'require_previous_session' => true, 'username_parameter' => '_username', 'password_parameter' => '_password', 'csrf_parameter' => '_csrf_token', 'csrf_token_id' => 'authenticate', 'post_only' => true), $b, $c, $this->get('security.csrf.token_manager')), 4 => new \Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener($a, '644147076a6636.35785436', $b, $g), 5 => ${($_ = isset($this->services['security.access_listener']) ? $this->services['security.access_listener'] : $this->getSecurity_AccessListenerService()) && false ?: '_'}), new \Symfony\Component\Security\Http\Firewall\ExceptionListener($a, $d, $e, 'main', new \Symfony\Component\Security\Http\EntryPoint\FormAuthenticationEntryPoint($f, $e, '/login', false), NULL, NULL, $b, false), new \Symfony\Bundle\SecurityBundle\Security\FirewallConfig('main', 'security.user_checker', 'security.request_matcher.a64d671f18e5575531d76c1d1154fdc4476cb8a79c02ed7a3469178c6d7b96b5ed4e60db', true, false, 'fos_user.user_provider.username', 'main', 'security.authentication.form_entry_point.main', NULL, NULL, array(0 => 'logout', 1 => 'form_login', 2 => 'anonymous')));
+        return $this->services['security.firewall.map.context.main'] = new \Symfony\Bundle\SecurityBundle\Security\FirewallContext(array(0 => ${($_ = isset($this->services['security.channel_listener']) ? $this->services['security.channel_listener'] : $this->getSecurity_ChannelListenerService()) && false ?: '_'}, 1 => new \Symfony\Component\Security\Http\Firewall\ContextListener($a, array(0 => ${($_ = isset($this->services['fos_user.user_provider.username']) ? $this->services['fos_user.user_provider.username'] : $this->getFosUser_UserProvider_UsernameService()) && false ?: '_'}), 'main', $b, $c, $d), 2 => $h, 3 => new \Symfony\Component\Security\Http\Firewall\UsernamePasswordFormAuthenticationListener($a, $g, ${($_ = isset($this->services['security.authentication.session_strategy']) ? $this->services['security.authentication.session_strategy'] : $this->getSecurity_Authentication_SessionStrategyService()) && false ?: '_'}, $e, 'main', $i, $j, array('check_path' => '/login_check', 'use_forward' => false, 'require_previous_session' => true, 'username_parameter' => '_username', 'password_parameter' => '_password', 'csrf_parameter' => '_csrf_token', 'csrf_token_id' => 'authenticate', 'post_only' => true), $b, $c, $this->get('security.csrf.token_manager')), 4 => new \Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener($a, '6442955d63a681.81260595', $b, $g), 5 => ${($_ = isset($this->services['security.access_listener']) ? $this->services['security.access_listener'] : $this->getSecurity_AccessListenerService()) && false ?: '_'}), new \Symfony\Component\Security\Http\Firewall\ExceptionListener($a, $d, $e, 'main', new \Symfony\Component\Security\Http\EntryPoint\FormAuthenticationEntryPoint($f, $e, '/login', false), NULL, NULL, $b, false), new \Symfony\Bundle\SecurityBundle\Security\FirewallConfig('main', 'security.user_checker', 'security.request_matcher.a64d671f18e5575531d76c1d1154fdc4476cb8a79c02ed7a3469178c6d7b96b5ed4e60db', true, false, 'fos_user.user_provider.username', 'main', 'security.authentication.form_entry_point.main', NULL, NULL, array(0 => 'logout', 1 => 'form_login', 2 => 'anonymous')));
     }
 
     /**
-     * Gets the 'security.password_encoder' service.
+     * Gets the public 'security.password_encoder' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Security\Core\Encoder\UserPasswordEncoder A Symfony\Component\Security\Core\Encoder\UserPasswordEncoder instance
+     * @return \Symfony\Component\Security\Core\Encoder\UserPasswordEncoder
      */
     protected function getSecurity_PasswordEncoderService()
     {
@@ -3603,12 +3046,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.rememberme.response_listener' service.
+     * Gets the public 'security.rememberme.response_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Security\Http\RememberMe\ResponseListener A Symfony\Component\Security\Http\RememberMe\ResponseListener instance
+     * @return \Symfony\Component\Security\Http\RememberMe\ResponseListener
      */
     protected function getSecurity_Rememberme_ResponseListenerService()
     {
@@ -3616,12 +3056,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.token_storage' service.
+     * Gets the public 'security.token_storage' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage A Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage instance
+     * @return \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage
      */
     protected function getSecurity_TokenStorageService()
     {
@@ -3629,12 +3066,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.validator.user_password' service.
+     * Gets the public 'security.validator.user_password' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Security\Core\Validator\Constraints\UserPasswordValidator A Symfony\Component\Security\Core\Validator\Constraints\UserPasswordValidator instance
+     * @return \Symfony\Component\Security\Core\Validator\Constraints\UserPasswordValidator
      */
     protected function getSecurity_Validator_UserPasswordService()
     {
@@ -3642,12 +3076,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sensio_distribution.security_checker' service.
+     * Gets the public 'sensio_distribution.security_checker' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \SensioLabs\Security\SecurityChecker A SensioLabs\Security\SecurityChecker instance
+     * @return \SensioLabs\Security\SecurityChecker
      */
     protected function getSensioDistribution_SecurityCheckerService()
     {
@@ -3655,12 +3086,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sensio_distribution.security_checker.command' service.
+     * Gets the public 'sensio_distribution.security_checker.command' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \SensioLabs\Security\Command\SecurityCheckerCommand A SensioLabs\Security\Command\SecurityCheckerCommand instance
+     * @return \SensioLabs\Security\Command\SecurityCheckerCommand
      */
     protected function getSensioDistribution_SecurityChecker_CommandService()
     {
@@ -3668,12 +3096,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sensio_framework_extra.cache.listener' service.
+     * Gets the public 'sensio_framework_extra.cache.listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sensio\Bundle\FrameworkExtraBundle\EventListener\HttpCacheListener A Sensio\Bundle\FrameworkExtraBundle\EventListener\HttpCacheListener instance
+     * @return \Sensio\Bundle\FrameworkExtraBundle\EventListener\HttpCacheListener
      */
     protected function getSensioFrameworkExtra_Cache_ListenerService()
     {
@@ -3681,12 +3106,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sensio_framework_extra.controller.listener' service.
+     * Gets the public 'sensio_framework_extra.controller.listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sensio\Bundle\FrameworkExtraBundle\EventListener\ControllerListener A Sensio\Bundle\FrameworkExtraBundle\EventListener\ControllerListener instance
+     * @return \Sensio\Bundle\FrameworkExtraBundle\EventListener\ControllerListener
      */
     protected function getSensioFrameworkExtra_Controller_ListenerService()
     {
@@ -3694,12 +3116,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sensio_framework_extra.converter.datetime' service.
+     * Gets the public 'sensio_framework_extra.converter.datetime' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DateTimeParamConverter A Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DateTimeParamConverter instance
+     * @return \Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DateTimeParamConverter
      */
     protected function getSensioFrameworkExtra_Converter_DatetimeService()
     {
@@ -3707,12 +3126,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sensio_framework_extra.converter.doctrine.orm' service.
+     * Gets the public 'sensio_framework_extra.converter.doctrine.orm' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DoctrineParamConverter A Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DoctrineParamConverter instance
+     * @return \Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DoctrineParamConverter
      */
     protected function getSensioFrameworkExtra_Converter_Doctrine_OrmService()
     {
@@ -3720,12 +3136,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sensio_framework_extra.converter.listener' service.
+     * Gets the public 'sensio_framework_extra.converter.listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sensio\Bundle\FrameworkExtraBundle\EventListener\ParamConverterListener A Sensio\Bundle\FrameworkExtraBundle\EventListener\ParamConverterListener instance
+     * @return \Sensio\Bundle\FrameworkExtraBundle\EventListener\ParamConverterListener
      */
     protected function getSensioFrameworkExtra_Converter_ListenerService()
     {
@@ -3733,12 +3146,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sensio_framework_extra.converter.manager' service.
+     * Gets the public 'sensio_framework_extra.converter.manager' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterManager A Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterManager instance
+     * @return \Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterManager
      */
     protected function getSensioFrameworkExtra_Converter_ManagerService()
     {
@@ -3751,12 +3161,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sensio_framework_extra.security.listener' service.
+     * Gets the public 'sensio_framework_extra.security.listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sensio\Bundle\FrameworkExtraBundle\EventListener\SecurityListener A Sensio\Bundle\FrameworkExtraBundle\EventListener\SecurityListener instance
+     * @return \Sensio\Bundle\FrameworkExtraBundle\EventListener\SecurityListener
      */
     protected function getSensioFrameworkExtra_Security_ListenerService()
     {
@@ -3764,12 +3171,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sensio_framework_extra.view.guesser' service.
+     * Gets the public 'sensio_framework_extra.view.guesser' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser A Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser instance
+     * @return \Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser
      */
     protected function getSensioFrameworkExtra_View_GuesserService()
     {
@@ -3777,12 +3181,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sensio_framework_extra.view.listener' service.
+     * Gets the public 'sensio_framework_extra.view.listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener A Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener instance
+     * @return \Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener
      */
     protected function getSensioFrameworkExtra_View_ListenerService()
     {
@@ -3790,10 +3191,7 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'service_container' service.
-     *
-     * This service is shared.
-     * This method always returns the same instance of the service.
+     * Gets the public 'service_container' shared service.
      *
      * @throws RuntimeException always since this service is expected to be injected dynamically
      */
@@ -3803,12 +3201,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'session' service.
+     * Gets the public 'session' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpFoundation\Session\Session A Symfony\Component\HttpFoundation\Session\Session instance
+     * @return \Symfony\Component\HttpFoundation\Session\Session
      */
     protected function getSessionService()
     {
@@ -3816,12 +3211,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'session.handler' service.
+     * Gets the public 'session.handler' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpFoundation\Session\Storage\Handler\NativeFileSessionHandler A Symfony\Component\HttpFoundation\Session\Storage\Handler\NativeFileSessionHandler instance
+     * @return \Symfony\Component\HttpFoundation\Session\Storage\Handler\NativeFileSessionHandler
      */
     protected function getSession_HandlerService()
     {
@@ -3829,12 +3221,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'session.save_listener' service.
+     * Gets the public 'session.save_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\EventListener\SaveSessionListener A Symfony\Component\HttpKernel\EventListener\SaveSessionListener instance
+     * @return \Symfony\Component\HttpKernel\EventListener\SaveSessionListener
      */
     protected function getSession_SaveListenerService()
     {
@@ -3842,12 +3231,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'session.storage.filesystem' service.
+     * Gets the public 'session.storage.filesystem' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage A Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage instance
+     * @return \Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage
      */
     protected function getSession_Storage_FilesystemService()
     {
@@ -3855,12 +3241,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'session.storage.native' service.
+     * Gets the public 'session.storage.native' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage A Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage instance
+     * @return \Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage
      */
     protected function getSession_Storage_NativeService()
     {
@@ -3868,12 +3251,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'session.storage.php_bridge' service.
+     * Gets the public 'session.storage.php_bridge' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpFoundation\Session\Storage\PhpBridgeSessionStorage A Symfony\Component\HttpFoundation\Session\Storage\PhpBridgeSessionStorage instance
+     * @return \Symfony\Component\HttpFoundation\Session\Storage\PhpBridgeSessionStorage
      */
     protected function getSession_Storage_PhpBridgeService()
     {
@@ -3881,12 +3261,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'session_listener' service.
+     * Gets the public 'session_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\EventListener\SessionListener A Symfony\Bundle\FrameworkBundle\EventListener\SessionListener instance
+     * @return \Symfony\Bundle\FrameworkBundle\EventListener\SessionListener
      */
     protected function getSessionListenerService()
     {
@@ -3894,12 +3271,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.action.append_form_field_element' service.
+     * Gets the public 'sonata.admin.action.append_form_field_element' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Action\AppendFormFieldElementAction A Sonata\AdminBundle\Action\AppendFormFieldElementAction instance
+     * @return \Sonata\AdminBundle\Action\AppendFormFieldElementAction
      */
     protected function getSonata_Admin_Action_AppendFormFieldElementService()
     {
@@ -3907,12 +3281,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.action.get_short_object_description' service.
+     * Gets the public 'sonata.admin.action.get_short_object_description' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Action\GetShortObjectDescriptionAction A Sonata\AdminBundle\Action\GetShortObjectDescriptionAction instance
+     * @return \Sonata\AdminBundle\Action\GetShortObjectDescriptionAction
      */
     protected function getSonata_Admin_Action_GetShortObjectDescriptionService()
     {
@@ -3920,12 +3291,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.action.retrieve_autocomplete_items' service.
+     * Gets the public 'sonata.admin.action.retrieve_autocomplete_items' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Action\RetrieveAutocompleteItemsAction A Sonata\AdminBundle\Action\RetrieveAutocompleteItemsAction instance
+     * @return \Sonata\AdminBundle\Action\RetrieveAutocompleteItemsAction
      */
     protected function getSonata_Admin_Action_RetrieveAutocompleteItemsService()
     {
@@ -3933,12 +3301,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.action.retrieve_form_field_element' service.
+     * Gets the public 'sonata.admin.action.retrieve_form_field_element' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Action\RetrieveFormFieldElementAction A Sonata\AdminBundle\Action\RetrieveFormFieldElementAction instance
+     * @return \Sonata\AdminBundle\Action\RetrieveFormFieldElementAction
      */
     protected function getSonata_Admin_Action_RetrieveFormFieldElementService()
     {
@@ -3946,12 +3311,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.action.set_object_field_value' service.
+     * Gets the public 'sonata.admin.action.set_object_field_value' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Action\SetObjectFieldValueAction A Sonata\AdminBundle\Action\SetObjectFieldValueAction instance
+     * @return \Sonata\AdminBundle\Action\SetObjectFieldValueAction
      */
     protected function getSonata_Admin_Action_SetObjectFieldValueService()
     {
@@ -3959,12 +3321,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.audit.manager' service.
+     * Gets the public 'sonata.admin.audit.manager' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Model\AuditManager A Sonata\AdminBundle\Model\AuditManager instance
+     * @return \Sonata\AdminBundle\Model\AuditManager
      */
     protected function getSonata_Admin_Audit_ManagerService()
     {
@@ -3972,12 +3331,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.block.admin_list' service.
+     * Gets the public 'sonata.admin.block.admin_list' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Block\AdminListBlockService A Sonata\AdminBundle\Block\AdminListBlockService instance
+     * @return \Sonata\AdminBundle\Block\AdminListBlockService
      */
     protected function getSonata_Admin_Block_AdminListService()
     {
@@ -3985,12 +3341,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.block.search_result' service.
+     * Gets the public 'sonata.admin.block.search_result' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Block\AdminSearchBlockService A Sonata\AdminBundle\Block\AdminSearchBlockService instance
+     * @return \Sonata\AdminBundle\Block\AdminSearchBlockService
      */
     protected function getSonata_Admin_Block_SearchResultService()
     {
@@ -3998,12 +3351,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.block.stats' service.
+     * Gets the public 'sonata.admin.block.stats' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Block\AdminStatsBlockService A Sonata\AdminBundle\Block\AdminStatsBlockService instance
+     * @return \Sonata\AdminBundle\Block\AdminStatsBlockService
      */
     protected function getSonata_Admin_Block_StatsService()
     {
@@ -4011,12 +3361,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.breadcrumbs_builder' service.
+     * Gets the public 'sonata.admin.breadcrumbs_builder' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Admin\BreadcrumbsBuilder A Sonata\AdminBundle\Admin\BreadcrumbsBuilder instance
+     * @return \Sonata\AdminBundle\Admin\BreadcrumbsBuilder
      */
     protected function getSonata_Admin_BreadcrumbsBuilderService()
     {
@@ -4024,12 +3371,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.builder.filter.factory' service.
+     * Gets the public 'sonata.admin.builder.filter.factory' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Filter\FilterFactory A Sonata\AdminBundle\Filter\FilterFactory instance
+     * @return \Sonata\AdminBundle\Filter\FilterFactory
      */
     protected function getSonata_Admin_Builder_Filter_FactoryService()
     {
@@ -4037,12 +3381,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.builder.orm_datagrid' service.
+     * Gets the public 'sonata.admin.builder.orm_datagrid' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\DoctrineORMAdminBundle\Builder\DatagridBuilder A Sonata\DoctrineORMAdminBundle\Builder\DatagridBuilder instance
+     * @return \Sonata\DoctrineORMAdminBundle\Builder\DatagridBuilder
      */
     protected function getSonata_Admin_Builder_OrmDatagridService()
     {
@@ -4050,12 +3391,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.builder.orm_form' service.
+     * Gets the public 'sonata.admin.builder.orm_form' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\DoctrineORMAdminBundle\Builder\FormContractor A Sonata\DoctrineORMAdminBundle\Builder\FormContractor instance
+     * @return \Sonata\DoctrineORMAdminBundle\Builder\FormContractor
      */
     protected function getSonata_Admin_Builder_OrmFormService()
     {
@@ -4063,12 +3401,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.builder.orm_list' service.
+     * Gets the public 'sonata.admin.builder.orm_list' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\DoctrineORMAdminBundle\Builder\ListBuilder A Sonata\DoctrineORMAdminBundle\Builder\ListBuilder instance
+     * @return \Sonata\DoctrineORMAdminBundle\Builder\ListBuilder
      */
     protected function getSonata_Admin_Builder_OrmListService()
     {
@@ -4076,12 +3411,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.builder.orm_show' service.
+     * Gets the public 'sonata.admin.builder.orm_show' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\DoctrineORMAdminBundle\Builder\ShowBuilder A Sonata\DoctrineORMAdminBundle\Builder\ShowBuilder instance
+     * @return \Sonata\DoctrineORMAdminBundle\Builder\ShowBuilder
      */
     protected function getSonata_Admin_Builder_OrmShowService()
     {
@@ -4089,12 +3421,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.controller.admin' service.
+     * Gets the public 'sonata.admin.controller.admin' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Controller\HelperController A Sonata\AdminBundle\Controller\HelperController instance
+     * @return \Sonata\AdminBundle\Controller\HelperController
      *
      * @deprecated The controller service "sonata.admin.controller.admin" is deprecated in favor of several action services since version 3.38.0 and will be removed in 4.0.
      */
@@ -4106,12 +3435,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.doctrine_orm.form.type.choice_field_mask' service.
+     * Gets the public 'sonata.admin.doctrine_orm.form.type.choice_field_mask' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType A Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType instance
+     * @return \Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType
      */
     protected function getSonata_Admin_DoctrineOrm_Form_Type_ChoiceFieldMaskService()
     {
@@ -4119,12 +3445,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.event.extension' service.
+     * Gets the public 'sonata.admin.event.extension' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Event\AdminEventExtension A Sonata\AdminBundle\Event\AdminEventExtension instance
+     * @return \Sonata\AdminBundle\Event\AdminEventExtension
      */
     protected function getSonata_Admin_Event_ExtensionService()
     {
@@ -4132,12 +3455,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.exporter' service.
+     * Gets the public 'sonata.admin.exporter' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Export\Exporter A Sonata\AdminBundle\Export\Exporter instance
+     * @return \Sonata\AdminBundle\Export\Exporter
      *
      * @deprecated The service "sonata.admin.exporter" is deprecated in favor of the "sonata.exporter.exporter" service since version 3.14 and will be removed in 4.0.
      */
@@ -4149,12 +3469,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.filter_persister.session' service.
+     * Gets the public 'sonata.admin.filter_persister.session' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Filter\Persister\SessionFilterPersister A Sonata\AdminBundle\Filter\Persister\SessionFilterPersister instance
+     * @return \Sonata\AdminBundle\Filter\Persister\SessionFilterPersister
      */
     protected function getSonata_Admin_FilterPersister_SessionService()
     {
@@ -4162,12 +3479,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.extension.choice' service.
+     * Gets the public 'sonata.admin.form.extension.choice' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Extension\ChoiceTypeExtension A Sonata\AdminBundle\Form\Extension\ChoiceTypeExtension instance
+     * @return \Sonata\AdminBundle\Form\Extension\ChoiceTypeExtension
      */
     protected function getSonata_Admin_Form_Extension_ChoiceService()
     {
@@ -4175,12 +3489,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.extension.field' service.
+     * Gets the public 'sonata.admin.form.extension.field' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Extension\Field\Type\FormTypeFieldExtension A Sonata\AdminBundle\Form\Extension\Field\Type\FormTypeFieldExtension instance
+     * @return \Sonata\AdminBundle\Form\Extension\Field\Type\FormTypeFieldExtension
      */
     protected function getSonata_Admin_Form_Extension_FieldService()
     {
@@ -4188,12 +3499,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.extension.field.mopa' service.
+     * Gets the public 'sonata.admin.form.extension.field.mopa' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Extension\Field\Type\MopaCompatibilityTypeFieldExtension A Sonata\AdminBundle\Form\Extension\Field\Type\MopaCompatibilityTypeFieldExtension instance
+     * @return \Sonata\AdminBundle\Form\Extension\Field\Type\MopaCompatibilityTypeFieldExtension
      */
     protected function getSonata_Admin_Form_Extension_Field_MopaService()
     {
@@ -4201,12 +3509,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.filter.type.choice' service.
+     * Gets the public 'sonata.admin.form.filter.type.choice' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\Filter\ChoiceType A Sonata\AdminBundle\Form\Type\Filter\ChoiceType instance
+     * @return \Sonata\AdminBundle\Form\Type\Filter\ChoiceType
      */
     protected function getSonata_Admin_Form_Filter_Type_ChoiceService()
     {
@@ -4214,12 +3519,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.filter.type.date' service.
+     * Gets the public 'sonata.admin.form.filter.type.date' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\Filter\DateType A Sonata\AdminBundle\Form\Type\Filter\DateType instance
+     * @return \Sonata\AdminBundle\Form\Type\Filter\DateType
      */
     protected function getSonata_Admin_Form_Filter_Type_DateService()
     {
@@ -4227,12 +3529,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.filter.type.daterange' service.
+     * Gets the public 'sonata.admin.form.filter.type.daterange' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\Filter\DateRangeType A Sonata\AdminBundle\Form\Type\Filter\DateRangeType instance
+     * @return \Sonata\AdminBundle\Form\Type\Filter\DateRangeType
      */
     protected function getSonata_Admin_Form_Filter_Type_DaterangeService()
     {
@@ -4240,12 +3539,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.filter.type.datetime' service.
+     * Gets the public 'sonata.admin.form.filter.type.datetime' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\Filter\DateTimeType A Sonata\AdminBundle\Form\Type\Filter\DateTimeType instance
+     * @return \Sonata\AdminBundle\Form\Type\Filter\DateTimeType
      */
     protected function getSonata_Admin_Form_Filter_Type_DatetimeService()
     {
@@ -4253,12 +3549,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.filter.type.datetime_range' service.
+     * Gets the public 'sonata.admin.form.filter.type.datetime_range' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\Filter\DateTimeRangeType A Sonata\AdminBundle\Form\Type\Filter\DateTimeRangeType instance
+     * @return \Sonata\AdminBundle\Form\Type\Filter\DateTimeRangeType
      */
     protected function getSonata_Admin_Form_Filter_Type_DatetimeRangeService()
     {
@@ -4266,12 +3559,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.filter.type.default' service.
+     * Gets the public 'sonata.admin.form.filter.type.default' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\Filter\DefaultType A Sonata\AdminBundle\Form\Type\Filter\DefaultType instance
+     * @return \Sonata\AdminBundle\Form\Type\Filter\DefaultType
      */
     protected function getSonata_Admin_Form_Filter_Type_DefaultService()
     {
@@ -4279,12 +3569,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.filter.type.number' service.
+     * Gets the public 'sonata.admin.form.filter.type.number' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\Filter\NumberType A Sonata\AdminBundle\Form\Type\Filter\NumberType instance
+     * @return \Sonata\AdminBundle\Form\Type\Filter\NumberType
      */
     protected function getSonata_Admin_Form_Filter_Type_NumberService()
     {
@@ -4292,12 +3579,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.type.admin' service.
+     * Gets the public 'sonata.admin.form.type.admin' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\AdminType A Sonata\AdminBundle\Form\Type\AdminType instance
+     * @return \Sonata\AdminBundle\Form\Type\AdminType
      */
     protected function getSonata_Admin_Form_Type_AdminService()
     {
@@ -4305,12 +3589,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.type.collection' service.
+     * Gets the public 'sonata.admin.form.type.collection' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\CollectionType A Sonata\AdminBundle\Form\Type\CollectionType instance
+     * @return \Sonata\AdminBundle\Form\Type\CollectionType
      */
     protected function getSonata_Admin_Form_Type_CollectionService()
     {
@@ -4318,12 +3599,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.type.model_autocomplete' service.
+     * Gets the public 'sonata.admin.form.type.model_autocomplete' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\ModelAutocompleteType A Sonata\AdminBundle\Form\Type\ModelAutocompleteType instance
+     * @return \Sonata\AdminBundle\Form\Type\ModelAutocompleteType
      */
     protected function getSonata_Admin_Form_Type_ModelAutocompleteService()
     {
@@ -4331,12 +3609,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.type.model_choice' service.
+     * Gets the public 'sonata.admin.form.type.model_choice' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\ModelType A Sonata\AdminBundle\Form\Type\ModelType instance
+     * @return \Sonata\AdminBundle\Form\Type\ModelType
      */
     protected function getSonata_Admin_Form_Type_ModelChoiceService()
     {
@@ -4344,12 +3619,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.type.model_hidden' service.
+     * Gets the public 'sonata.admin.form.type.model_hidden' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\ModelHiddenType A Sonata\AdminBundle\Form\Type\ModelHiddenType instance
+     * @return \Sonata\AdminBundle\Form\Type\ModelHiddenType
      */
     protected function getSonata_Admin_Form_Type_ModelHiddenService()
     {
@@ -4357,12 +3629,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.type.model_list' service.
+     * Gets the public 'sonata.admin.form.type.model_list' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\ModelListType A Sonata\AdminBundle\Form\Type\ModelListType instance
+     * @return \Sonata\AdminBundle\Form\Type\ModelListType
      */
     protected function getSonata_Admin_Form_Type_ModelListService()
     {
@@ -4370,12 +3639,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.form.type.model_reference' service.
+     * Gets the public 'sonata.admin.form.type.model_reference' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Form\Type\ModelReferenceType A Sonata\AdminBundle\Form\Type\ModelReferenceType instance
+     * @return \Sonata\AdminBundle\Form\Type\ModelReferenceType
      */
     protected function getSonata_Admin_Form_Type_ModelReferenceService()
     {
@@ -4383,12 +3649,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.global_template_registry' service.
+     * Gets the public 'sonata.admin.global_template_registry' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Templating\TemplateRegistry A Sonata\AdminBundle\Templating\TemplateRegistry instance
+     * @return \Sonata\AdminBundle\Templating\TemplateRegistry
      */
     protected function getSonata_Admin_GlobalTemplateRegistryService()
     {
@@ -4396,12 +3659,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.guesser.orm_datagrid' service.
+     * Gets the public 'sonata.admin.guesser.orm_datagrid' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\DoctrineORMAdminBundle\Guesser\FilterTypeGuesser A Sonata\DoctrineORMAdminBundle\Guesser\FilterTypeGuesser instance
+     * @return \Sonata\DoctrineORMAdminBundle\Guesser\FilterTypeGuesser
      */
     protected function getSonata_Admin_Guesser_OrmDatagridService()
     {
@@ -4409,12 +3669,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.guesser.orm_datagrid_chain' service.
+     * Gets the public 'sonata.admin.guesser.orm_datagrid_chain' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Guesser\TypeGuesserChain A Sonata\AdminBundle\Guesser\TypeGuesserChain instance
+     * @return \Sonata\AdminBundle\Guesser\TypeGuesserChain
      */
     protected function getSonata_Admin_Guesser_OrmDatagridChainService()
     {
@@ -4422,12 +3679,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.guesser.orm_list' service.
+     * Gets the public 'sonata.admin.guesser.orm_list' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\DoctrineORMAdminBundle\Guesser\TypeGuesser A Sonata\DoctrineORMAdminBundle\Guesser\TypeGuesser instance
+     * @return \Sonata\DoctrineORMAdminBundle\Guesser\TypeGuesser
      */
     protected function getSonata_Admin_Guesser_OrmListService()
     {
@@ -4435,12 +3689,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.guesser.orm_list_chain' service.
+     * Gets the public 'sonata.admin.guesser.orm_list_chain' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Guesser\TypeGuesserChain A Sonata\AdminBundle\Guesser\TypeGuesserChain instance
+     * @return \Sonata\AdminBundle\Guesser\TypeGuesserChain
      */
     protected function getSonata_Admin_Guesser_OrmListChainService()
     {
@@ -4448,12 +3699,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.guesser.orm_show' service.
+     * Gets the public 'sonata.admin.guesser.orm_show' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\DoctrineORMAdminBundle\Guesser\TypeGuesser A Sonata\DoctrineORMAdminBundle\Guesser\TypeGuesser instance
+     * @return \Sonata\DoctrineORMAdminBundle\Guesser\TypeGuesser
      */
     protected function getSonata_Admin_Guesser_OrmShowService()
     {
@@ -4461,12 +3709,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.guesser.orm_show_chain' service.
+     * Gets the public 'sonata.admin.guesser.orm_show_chain' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Guesser\TypeGuesserChain A Sonata\AdminBundle\Guesser\TypeGuesserChain instance
+     * @return \Sonata\AdminBundle\Guesser\TypeGuesserChain
      */
     protected function getSonata_Admin_Guesser_OrmShowChainService()
     {
@@ -4474,12 +3719,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.helper' service.
+     * Gets the public 'sonata.admin.helper' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Admin\AdminHelper A Sonata\AdminBundle\Admin\AdminHelper instance
+     * @return \Sonata\AdminBundle\Admin\AdminHelper
      */
     protected function getSonata_Admin_HelperService()
     {
@@ -4487,12 +3729,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.label.strategy.bc' service.
+     * Gets the public 'sonata.admin.label.strategy.bc' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Translator\BCLabelTranslatorStrategy A Sonata\AdminBundle\Translator\BCLabelTranslatorStrategy instance
+     * @return \Sonata\AdminBundle\Translator\BCLabelTranslatorStrategy
      */
     protected function getSonata_Admin_Label_Strategy_BcService()
     {
@@ -4500,12 +3739,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.label.strategy.form_component' service.
+     * Gets the public 'sonata.admin.label.strategy.form_component' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Translator\FormLabelTranslatorStrategy A Sonata\AdminBundle\Translator\FormLabelTranslatorStrategy instance
+     * @return \Sonata\AdminBundle\Translator\FormLabelTranslatorStrategy
      */
     protected function getSonata_Admin_Label_Strategy_FormComponentService()
     {
@@ -4513,12 +3749,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.label.strategy.native' service.
+     * Gets the public 'sonata.admin.label.strategy.native' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Translator\NativeLabelTranslatorStrategy A Sonata\AdminBundle\Translator\NativeLabelTranslatorStrategy instance
+     * @return \Sonata\AdminBundle\Translator\NativeLabelTranslatorStrategy
      */
     protected function getSonata_Admin_Label_Strategy_NativeService()
     {
@@ -4526,12 +3759,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.label.strategy.noop' service.
+     * Gets the public 'sonata.admin.label.strategy.noop' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Translator\NoopLabelTranslatorStrategy A Sonata\AdminBundle\Translator\NoopLabelTranslatorStrategy instance
+     * @return \Sonata\AdminBundle\Translator\NoopLabelTranslatorStrategy
      */
     protected function getSonata_Admin_Label_Strategy_NoopService()
     {
@@ -4539,12 +3769,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.label.strategy.underscore' service.
+     * Gets the public 'sonata.admin.label.strategy.underscore' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Translator\UnderscoreLabelTranslatorStrategy A Sonata\AdminBundle\Translator\UnderscoreLabelTranslatorStrategy instance
+     * @return \Sonata\AdminBundle\Translator\UnderscoreLabelTranslatorStrategy
      */
     protected function getSonata_Admin_Label_Strategy_UnderscoreService()
     {
@@ -4552,12 +3779,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.manager.orm' service.
+     * Gets the public 'sonata.admin.manager.orm' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\DoctrineORMAdminBundle\Model\ModelManager A Sonata\DoctrineORMAdminBundle\Model\ModelManager instance
+     * @return \Sonata\DoctrineORMAdminBundle\Model\ModelManager
      */
     protected function getSonata_Admin_Manager_OrmService()
     {
@@ -4565,12 +3789,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.manipulator.acl.admin' service.
+     * Gets the public 'sonata.admin.manipulator.acl.admin' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Util\AdminAclManipulator A Sonata\AdminBundle\Util\AdminAclManipulator instance
+     * @return \Sonata\AdminBundle\Util\AdminAclManipulator
      */
     protected function getSonata_Admin_Manipulator_Acl_AdminService()
     {
@@ -4578,12 +3799,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.manipulator.acl.object.orm' service.
+     * Gets the public 'sonata.admin.manipulator.acl.object.orm' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\DoctrineORMAdminBundle\Util\ObjectAclManipulator A Sonata\DoctrineORMAdminBundle\Util\ObjectAclManipulator instance
+     * @return \Sonata\DoctrineORMAdminBundle\Util\ObjectAclManipulator
      */
     protected function getSonata_Admin_Manipulator_Acl_Object_OrmService()
     {
@@ -4591,12 +3809,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.menu.matcher.voter.active' service.
+     * Gets the public 'sonata.admin.menu.matcher.voter.active' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Menu\Matcher\Voter\ActiveVoter A Sonata\AdminBundle\Menu\Matcher\Voter\ActiveVoter instance
+     * @return \Sonata\AdminBundle\Menu\Matcher\Voter\ActiveVoter
      */
     protected function getSonata_Admin_Menu_Matcher_Voter_ActiveService()
     {
@@ -4604,12 +3819,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.menu.matcher.voter.admin' service.
+     * Gets the public 'sonata.admin.menu.matcher.voter.admin' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Menu\Matcher\Voter\AdminVoter A Sonata\AdminBundle\Menu\Matcher\Voter\AdminVoter instance
+     * @return \Sonata\AdminBundle\Menu\Matcher\Voter\AdminVoter
      */
     protected function getSonata_Admin_Menu_Matcher_Voter_AdminService()
     {
@@ -4617,12 +3829,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.menu.matcher.voter.children' service.
+     * Gets the public 'sonata.admin.menu.matcher.voter.children' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Menu\Matcher\Voter\ChildrenVoter A Sonata\AdminBundle\Menu\Matcher\Voter\ChildrenVoter instance
+     * @return \Sonata\AdminBundle\Menu\Matcher\Voter\ChildrenVoter
      *
      * @deprecated The "sonata.admin.menu.matcher.voter.children" service is deprecated since 3.28 and will be removed in 4.0.
      */
@@ -4634,12 +3843,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.menu_builder' service.
+     * Gets the public 'sonata.admin.menu_builder' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Menu\MenuBuilder A Sonata\AdminBundle\Menu\MenuBuilder instance
+     * @return \Sonata\AdminBundle\Menu\MenuBuilder
      */
     protected function getSonata_Admin_MenuBuilderService()
     {
@@ -4647,12 +3853,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.object.manipulator.acl.admin' service.
+     * Gets the public 'sonata.admin.object.manipulator.acl.admin' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Util\AdminObjectAclManipulator A Sonata\AdminBundle\Util\AdminObjectAclManipulator instance
+     * @return \Sonata\AdminBundle\Util\AdminObjectAclManipulator
      */
     protected function getSonata_Admin_Object_Manipulator_Acl_AdminService()
     {
@@ -4660,9 +3863,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.orm.filter.type.boolean' service.
+     * Gets the public 'sonata.admin.orm.filter.type.boolean' service.
      *
-     * @return \Sonata\DoctrineORMAdminBundle\Filter\BooleanFilter A Sonata\DoctrineORMAdminBundle\Filter\BooleanFilter instance
+     * @return \Sonata\DoctrineORMAdminBundle\Filter\BooleanFilter
      */
     protected function getSonata_Admin_Orm_Filter_Type_BooleanService()
     {
@@ -4670,9 +3873,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.orm.filter.type.callback' service.
+     * Gets the public 'sonata.admin.orm.filter.type.callback' service.
      *
-     * @return \Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter A Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter instance
+     * @return \Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter
      */
     protected function getSonata_Admin_Orm_Filter_Type_CallbackService()
     {
@@ -4680,9 +3883,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.orm.filter.type.choice' service.
+     * Gets the public 'sonata.admin.orm.filter.type.choice' service.
      *
-     * @return \Sonata\DoctrineORMAdminBundle\Filter\ChoiceFilter A Sonata\DoctrineORMAdminBundle\Filter\ChoiceFilter instance
+     * @return \Sonata\DoctrineORMAdminBundle\Filter\ChoiceFilter
      */
     protected function getSonata_Admin_Orm_Filter_Type_ChoiceService()
     {
@@ -4690,9 +3893,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.orm.filter.type.class' service.
+     * Gets the public 'sonata.admin.orm.filter.type.class' service.
      *
-     * @return \Sonata\DoctrineORMAdminBundle\Filter\ClassFilter A Sonata\DoctrineORMAdminBundle\Filter\ClassFilter instance
+     * @return \Sonata\DoctrineORMAdminBundle\Filter\ClassFilter
      */
     protected function getSonata_Admin_Orm_Filter_Type_ClassService()
     {
@@ -4700,9 +3903,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.orm.filter.type.date' service.
+     * Gets the public 'sonata.admin.orm.filter.type.date' service.
      *
-     * @return \Sonata\DoctrineORMAdminBundle\Filter\DateFilter A Sonata\DoctrineORMAdminBundle\Filter\DateFilter instance
+     * @return \Sonata\DoctrineORMAdminBundle\Filter\DateFilter
      */
     protected function getSonata_Admin_Orm_Filter_Type_DateService()
     {
@@ -4710,9 +3913,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.orm.filter.type.date_range' service.
+     * Gets the public 'sonata.admin.orm.filter.type.date_range' service.
      *
-     * @return \Sonata\DoctrineORMAdminBundle\Filter\DateRangeFilter A Sonata\DoctrineORMAdminBundle\Filter\DateRangeFilter instance
+     * @return \Sonata\DoctrineORMAdminBundle\Filter\DateRangeFilter
      */
     protected function getSonata_Admin_Orm_Filter_Type_DateRangeService()
     {
@@ -4720,9 +3923,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.orm.filter.type.datetime' service.
+     * Gets the public 'sonata.admin.orm.filter.type.datetime' service.
      *
-     * @return \Sonata\DoctrineORMAdminBundle\Filter\DateTimeFilter A Sonata\DoctrineORMAdminBundle\Filter\DateTimeFilter instance
+     * @return \Sonata\DoctrineORMAdminBundle\Filter\DateTimeFilter
      */
     protected function getSonata_Admin_Orm_Filter_Type_DatetimeService()
     {
@@ -4730,9 +3933,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.orm.filter.type.datetime_range' service.
+     * Gets the public 'sonata.admin.orm.filter.type.datetime_range' service.
      *
-     * @return \Sonata\DoctrineORMAdminBundle\Filter\DateTimeRangeFilter A Sonata\DoctrineORMAdminBundle\Filter\DateTimeRangeFilter instance
+     * @return \Sonata\DoctrineORMAdminBundle\Filter\DateTimeRangeFilter
      */
     protected function getSonata_Admin_Orm_Filter_Type_DatetimeRangeService()
     {
@@ -4740,9 +3943,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.orm.filter.type.model' service.
+     * Gets the public 'sonata.admin.orm.filter.type.model' service.
      *
-     * @return \Sonata\DoctrineORMAdminBundle\Filter\ModelFilter A Sonata\DoctrineORMAdminBundle\Filter\ModelFilter instance
+     * @return \Sonata\DoctrineORMAdminBundle\Filter\ModelFilter
      */
     protected function getSonata_Admin_Orm_Filter_Type_ModelService()
     {
@@ -4750,9 +3953,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.orm.filter.type.model_autocomplete' service.
+     * Gets the public 'sonata.admin.orm.filter.type.model_autocomplete' service.
      *
-     * @return \Sonata\DoctrineORMAdminBundle\Filter\ModelAutocompleteFilter A Sonata\DoctrineORMAdminBundle\Filter\ModelAutocompleteFilter instance
+     * @return \Sonata\DoctrineORMAdminBundle\Filter\ModelAutocompleteFilter
      */
     protected function getSonata_Admin_Orm_Filter_Type_ModelAutocompleteService()
     {
@@ -4760,9 +3963,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.orm.filter.type.number' service.
+     * Gets the public 'sonata.admin.orm.filter.type.number' service.
      *
-     * @return \Sonata\DoctrineORMAdminBundle\Filter\NumberFilter A Sonata\DoctrineORMAdminBundle\Filter\NumberFilter instance
+     * @return \Sonata\DoctrineORMAdminBundle\Filter\NumberFilter
      */
     protected function getSonata_Admin_Orm_Filter_Type_NumberService()
     {
@@ -4770,9 +3973,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.orm.filter.type.string' service.
+     * Gets the public 'sonata.admin.orm.filter.type.string' service.
      *
-     * @return \Sonata\DoctrineORMAdminBundle\Filter\StringFilter A Sonata\DoctrineORMAdminBundle\Filter\StringFilter instance
+     * @return \Sonata\DoctrineORMAdminBundle\Filter\StringFilter
      */
     protected function getSonata_Admin_Orm_Filter_Type_StringService()
     {
@@ -4780,9 +3983,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.orm.filter.type.time' service.
+     * Gets the public 'sonata.admin.orm.filter.type.time' service.
      *
-     * @return \Sonata\DoctrineORMAdminBundle\Filter\TimeFilter A Sonata\DoctrineORMAdminBundle\Filter\TimeFilter instance
+     * @return \Sonata\DoctrineORMAdminBundle\Filter\TimeFilter
      */
     protected function getSonata_Admin_Orm_Filter_Type_TimeService()
     {
@@ -4790,12 +3993,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.pool' service.
+     * Gets the public 'sonata.admin.pool' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Admin\Pool A Sonata\AdminBundle\Admin\Pool instance
+     * @return \Sonata\AdminBundle\Admin\Pool
      */
     protected function getSonata_Admin_PoolService()
     {
@@ -4810,12 +4010,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.route.cache' service.
+     * Gets the public 'sonata.admin.route.cache' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Route\RoutesCache A Sonata\AdminBundle\Route\RoutesCache instance
+     * @return \Sonata\AdminBundle\Route\RoutesCache
      */
     protected function getSonata_Admin_Route_CacheService()
     {
@@ -4823,12 +4020,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.route.cache_warmup' service.
+     * Gets the public 'sonata.admin.route.cache_warmup' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Route\RoutesCacheWarmUp A Sonata\AdminBundle\Route\RoutesCacheWarmUp instance
+     * @return \Sonata\AdminBundle\Route\RoutesCacheWarmUp
      */
     protected function getSonata_Admin_Route_CacheWarmupService()
     {
@@ -4836,12 +4030,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.route.default_generator' service.
+     * Gets the public 'sonata.admin.route.default_generator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Route\DefaultRouteGenerator A Sonata\AdminBundle\Route\DefaultRouteGenerator instance
+     * @return \Sonata\AdminBundle\Route\DefaultRouteGenerator
      */
     protected function getSonata_Admin_Route_DefaultGeneratorService()
     {
@@ -4849,12 +4040,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.route.path_info' service.
+     * Gets the public 'sonata.admin.route.path_info' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Route\PathInfoBuilder A Sonata\AdminBundle\Route\PathInfoBuilder instance
+     * @return \Sonata\AdminBundle\Route\PathInfoBuilder
      */
     protected function getSonata_Admin_Route_PathInfoService()
     {
@@ -4862,12 +4050,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.route.query_string' service.
+     * Gets the public 'sonata.admin.route.query_string' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Route\QueryStringBuilder A Sonata\AdminBundle\Route\QueryStringBuilder instance
+     * @return \Sonata\AdminBundle\Route\QueryStringBuilder
      */
     protected function getSonata_Admin_Route_QueryStringService()
     {
@@ -4875,12 +4060,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.route_loader' service.
+     * Gets the public 'sonata.admin.route_loader' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Route\AdminPoolLoader A Sonata\AdminBundle\Route\AdminPoolLoader instance
+     * @return \Sonata\AdminBundle\Route\AdminPoolLoader
      */
     protected function getSonata_Admin_RouteLoaderService()
     {
@@ -4888,12 +4070,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.search.handler' service.
+     * Gets the public 'sonata.admin.search.handler' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Search\SearchHandler A Sonata\AdminBundle\Search\SearchHandler instance
+     * @return \Sonata\AdminBundle\Search\SearchHandler
      */
     protected function getSonata_Admin_Search_HandlerService()
     {
@@ -4901,12 +4080,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.security.handler' service.
+     * Gets the public 'sonata.admin.security.handler' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Security\Handler\NoopSecurityHandler A Sonata\AdminBundle\Security\Handler\NoopSecurityHandler instance
+     * @return \Sonata\AdminBundle\Security\Handler\NoopSecurityHandler
      */
     protected function getSonata_Admin_Security_HandlerService()
     {
@@ -4914,12 +4090,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.sidebar_menu' service.
+     * Gets the public 'sonata.admin.sidebar_menu' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Knp\Menu\MenuItem A Knp\Menu\MenuItem instance
+     * @return \Knp\Menu\MenuItem
      */
     protected function getSonata_Admin_SidebarMenuService()
     {
@@ -4927,12 +4100,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.twig.extension' service.
+     * Gets the public 'sonata.admin.twig.extension' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Twig\Extension\SonataAdminExtension A Sonata\AdminBundle\Twig\Extension\SonataAdminExtension instance
+     * @return \Sonata\AdminBundle\Twig\Extension\SonataAdminExtension
      */
     protected function getSonata_Admin_Twig_ExtensionService()
     {
@@ -4944,12 +4114,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.twig.global' service.
+     * Gets the public 'sonata.admin.twig.global' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Twig\GlobalVariables A Sonata\AdminBundle\Twig\GlobalVariables instance
+     * @return \Sonata\AdminBundle\Twig\GlobalVariables
      */
     protected function getSonata_Admin_Twig_GlobalService()
     {
@@ -4957,12 +4124,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.admin.validator.inline' service.
+     * Gets the public 'sonata.admin.validator.inline' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Validator\InlineValidator A Sonata\CoreBundle\Validator\InlineValidator instance
+     * @return \Sonata\CoreBundle\Validator\InlineValidator
      */
     protected function getSonata_Admin_Validator_InlineService()
     {
@@ -4970,12 +4134,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.cache.handler.default' service.
+     * Gets the public 'sonata.block.cache.handler.default' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Cache\HttpCacheHandler A Sonata\BlockBundle\Cache\HttpCacheHandler instance
+     * @return \Sonata\BlockBundle\Cache\HttpCacheHandler
      */
     protected function getSonata_Block_Cache_Handler_DefaultService()
     {
@@ -4983,12 +4144,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.cache.handler.noop' service.
+     * Gets the public 'sonata.block.cache.handler.noop' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Cache\NoopHttpCacheHandler A Sonata\BlockBundle\Cache\NoopHttpCacheHandler instance
+     * @return \Sonata\BlockBundle\Cache\NoopHttpCacheHandler
      */
     protected function getSonata_Block_Cache_Handler_NoopService()
     {
@@ -4996,12 +4154,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.context_manager.default' service.
+     * Gets the public 'sonata.block.context_manager.default' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Block\BlockContextManager A Sonata\BlockBundle\Block\BlockContextManager instance
+     * @return \Sonata\BlockBundle\Block\BlockContextManager
      */
     protected function getSonata_Block_ContextManager_DefaultService()
     {
@@ -5009,12 +4164,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.exception.filter.debug_only' service.
+     * Gets the public 'sonata.block.exception.filter.debug_only' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Exception\Filter\DebugOnlyFilter A Sonata\BlockBundle\Exception\Filter\DebugOnlyFilter instance
+     * @return \Sonata\BlockBundle\Exception\Filter\DebugOnlyFilter
      */
     protected function getSonata_Block_Exception_Filter_DebugOnlyService()
     {
@@ -5022,12 +4174,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.exception.filter.ignore_block_exception' service.
+     * Gets the public 'sonata.block.exception.filter.ignore_block_exception' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Exception\Filter\IgnoreClassFilter A Sonata\BlockBundle\Exception\Filter\IgnoreClassFilter instance
+     * @return \Sonata\BlockBundle\Exception\Filter\IgnoreClassFilter
      */
     protected function getSonata_Block_Exception_Filter_IgnoreBlockExceptionService()
     {
@@ -5035,12 +4184,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.exception.filter.keep_all' service.
+     * Gets the public 'sonata.block.exception.filter.keep_all' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Exception\Filter\KeepAllFilter A Sonata\BlockBundle\Exception\Filter\KeepAllFilter instance
+     * @return \Sonata\BlockBundle\Exception\Filter\KeepAllFilter
      */
     protected function getSonata_Block_Exception_Filter_KeepAllService()
     {
@@ -5048,12 +4194,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.exception.filter.keep_none' service.
+     * Gets the public 'sonata.block.exception.filter.keep_none' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Exception\Filter\KeepNoneFilter A Sonata\BlockBundle\Exception\Filter\KeepNoneFilter instance
+     * @return \Sonata\BlockBundle\Exception\Filter\KeepNoneFilter
      */
     protected function getSonata_Block_Exception_Filter_KeepNoneService()
     {
@@ -5061,12 +4204,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.exception.renderer.inline' service.
+     * Gets the public 'sonata.block.exception.renderer.inline' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Exception\Renderer\InlineRenderer A Sonata\BlockBundle\Exception\Renderer\InlineRenderer instance
+     * @return \Sonata\BlockBundle\Exception\Renderer\InlineRenderer
      */
     protected function getSonata_Block_Exception_Renderer_InlineService()
     {
@@ -5074,12 +4214,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.exception.renderer.inline_debug' service.
+     * Gets the public 'sonata.block.exception.renderer.inline_debug' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Exception\Renderer\InlineDebugRenderer A Sonata\BlockBundle\Exception\Renderer\InlineDebugRenderer instance
+     * @return \Sonata\BlockBundle\Exception\Renderer\InlineDebugRenderer
      */
     protected function getSonata_Block_Exception_Renderer_InlineDebugService()
     {
@@ -5087,12 +4224,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.exception.renderer.throw' service.
+     * Gets the public 'sonata.block.exception.renderer.throw' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Exception\Renderer\MonkeyThrowRenderer A Sonata\BlockBundle\Exception\Renderer\MonkeyThrowRenderer instance
+     * @return \Sonata\BlockBundle\Exception\Renderer\MonkeyThrowRenderer
      */
     protected function getSonata_Block_Exception_Renderer_ThrowService()
     {
@@ -5100,12 +4234,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.exception.strategy.manager' service.
+     * Gets the public 'sonata.block.exception.strategy.manager' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Exception\Strategy\StrategyManager A Sonata\BlockBundle\Exception\Strategy\StrategyManager instance
+     * @return \Sonata\BlockBundle\Exception\Strategy\StrategyManager
      */
     protected function getSonata_Block_Exception_Strategy_ManagerService()
     {
@@ -5118,12 +4249,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.form.type.block' service.
+     * Gets the public 'sonata.block.form.type.block' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Form\Type\ServiceListType A Sonata\BlockBundle\Form\Type\ServiceListType instance
+     * @return \Sonata\BlockBundle\Form\Type\ServiceListType
      */
     protected function getSonata_Block_Form_Type_BlockService()
     {
@@ -5131,12 +4259,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.form.type.container_template' service.
+     * Gets the public 'sonata.block.form.type.container_template' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Form\Type\ContainerTemplateType A Sonata\BlockBundle\Form\Type\ContainerTemplateType instance
+     * @return \Sonata\BlockBundle\Form\Type\ContainerTemplateType
      */
     protected function getSonata_Block_Form_Type_ContainerTemplateService()
     {
@@ -5144,12 +4269,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.loader.chain' service.
+     * Gets the public 'sonata.block.loader.chain' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Block\BlockLoaderChain A Sonata\BlockBundle\Block\BlockLoaderChain instance
+     * @return \Sonata\BlockBundle\Block\BlockLoaderChain
      */
     protected function getSonata_Block_Loader_ChainService()
     {
@@ -5157,12 +4279,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.loader.service' service.
+     * Gets the public 'sonata.block.loader.service' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Block\Loader\ServiceLoader A Sonata\BlockBundle\Block\Loader\ServiceLoader instance
+     * @return \Sonata\BlockBundle\Block\Loader\ServiceLoader
      */
     protected function getSonata_Block_Loader_ServiceService()
     {
@@ -5170,12 +4289,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.manager' service.
+     * Gets the public 'sonata.block.manager' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Block\BlockServiceManager A Sonata\BlockBundle\Block\BlockServiceManager instance
+     * @return \Sonata\BlockBundle\Block\BlockServiceManager
      */
     protected function getSonata_Block_ManagerService()
     {
@@ -5195,12 +4311,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.menu.registry' service.
+     * Gets the public 'sonata.block.menu.registry' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Menu\MenuRegistry A Sonata\BlockBundle\Menu\MenuRegistry instance
+     * @return \Sonata\BlockBundle\Menu\MenuRegistry
      */
     protected function getSonata_Block_Menu_RegistryService()
     {
@@ -5212,12 +4325,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.renderer.default' service.
+     * Gets the public 'sonata.block.renderer.default' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Block\BlockRenderer A Sonata\BlockBundle\Block\BlockRenderer instance
+     * @return \Sonata\BlockBundle\Block\BlockRenderer
      */
     protected function getSonata_Block_Renderer_DefaultService()
     {
@@ -5225,12 +4335,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.service.container' service.
+     * Gets the public 'sonata.block.service.container' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Block\Service\ContainerBlockService A Sonata\BlockBundle\Block\Service\ContainerBlockService instance
+     * @return \Sonata\BlockBundle\Block\Service\ContainerBlockService
      */
     protected function getSonata_Block_Service_ContainerService()
     {
@@ -5238,12 +4345,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.service.empty' service.
+     * Gets the public 'sonata.block.service.empty' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Block\Service\EmptyBlockService A Sonata\BlockBundle\Block\Service\EmptyBlockService instance
+     * @return \Sonata\BlockBundle\Block\Service\EmptyBlockService
      */
     protected function getSonata_Block_Service_EmptyService()
     {
@@ -5251,12 +4355,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.service.menu' service.
+     * Gets the public 'sonata.block.service.menu' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Block\Service\MenuBlockService A Sonata\BlockBundle\Block\Service\MenuBlockService instance
+     * @return \Sonata\BlockBundle\Block\Service\MenuBlockService
      */
     protected function getSonata_Block_Service_MenuService()
     {
@@ -5264,12 +4365,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.service.rss' service.
+     * Gets the public 'sonata.block.service.rss' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Block\Service\RssBlockService A Sonata\BlockBundle\Block\Service\RssBlockService instance
+     * @return \Sonata\BlockBundle\Block\Service\RssBlockService
      */
     protected function getSonata_Block_Service_RssService()
     {
@@ -5277,12 +4375,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.service.template' service.
+     * Gets the public 'sonata.block.service.template' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Block\Service\TemplateBlockService A Sonata\BlockBundle\Block\Service\TemplateBlockService instance
+     * @return \Sonata\BlockBundle\Block\Service\TemplateBlockService
      */
     protected function getSonata_Block_Service_TemplateService()
     {
@@ -5290,12 +4385,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.service.text' service.
+     * Gets the public 'sonata.block.service.text' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Block\Service\TextBlockService A Sonata\BlockBundle\Block\Service\TextBlockService instance
+     * @return \Sonata\BlockBundle\Block\Service\TextBlockService
      */
     protected function getSonata_Block_Service_TextService()
     {
@@ -5303,12 +4395,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.templating.helper' service.
+     * Gets the public 'sonata.block.templating.helper' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Templating\Helper\BlockHelper A Sonata\BlockBundle\Templating\Helper\BlockHelper instance
+     * @return \Sonata\BlockBundle\Templating\Helper\BlockHelper
      */
     protected function getSonata_Block_Templating_HelperService()
     {
@@ -5316,12 +4405,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.block.twig.global' service.
+     * Gets the public 'sonata.block.twig.global' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Twig\GlobalVariables A Sonata\BlockBundle\Twig\GlobalVariables instance
+     * @return \Sonata\BlockBundle\Twig\GlobalVariables
      */
     protected function getSonata_Block_Twig_GlobalService()
     {
@@ -5329,12 +4415,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.date.moment_format_converter' service.
+     * Gets the public 'sonata.core.date.moment_format_converter' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Date\MomentFormatConverter A Sonata\CoreBundle\Date\MomentFormatConverter instance
+     * @return \Sonata\CoreBundle\Date\MomentFormatConverter
      */
     protected function getSonata_Core_Date_MomentFormatConverterService()
     {
@@ -5342,12 +4425,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.flashmessage.manager' service.
+     * Gets the public 'sonata.core.flashmessage.manager' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\FlashMessage\FlashManager A Sonata\CoreBundle\FlashMessage\FlashManager instance
+     * @return \Sonata\CoreBundle\FlashMessage\FlashManager
      */
     protected function getSonata_Core_Flashmessage_ManagerService()
     {
@@ -5355,12 +4435,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.flashmessage.twig.extension' service.
+     * Gets the public 'sonata.core.flashmessage.twig.extension' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Twig\Extension\FlashMessageExtension A Sonata\CoreBundle\Twig\Extension\FlashMessageExtension instance
+     * @return \Sonata\CoreBundle\Twig\Extension\FlashMessageExtension
      */
     protected function getSonata_Core_Flashmessage_Twig_ExtensionService()
     {
@@ -5368,12 +4445,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.flashmessage.twig.runtime' service.
+     * Gets the public 'sonata.core.flashmessage.twig.runtime' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\Twig\Extension\FlashMessageRuntime A Sonata\Twig\Extension\FlashMessageRuntime instance
+     * @return \Sonata\Twig\Extension\FlashMessageRuntime
      */
     protected function getSonata_Core_Flashmessage_Twig_RuntimeService()
     {
@@ -5381,12 +4455,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.array' service.
+     * Gets the public 'sonata.core.form.type.array' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\Form\Type\ImmutableArrayType A Sonata\Form\Type\ImmutableArrayType instance
+     * @return \Sonata\Form\Type\ImmutableArrayType
      */
     protected function getSonata_Core_Form_Type_ArrayService()
     {
@@ -5394,12 +4465,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.array_legacy' service.
+     * Gets the public 'sonata.core.form.type.array_legacy' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Form\Type\ImmutableArrayType A Sonata\CoreBundle\Form\Type\ImmutableArrayType instance
+     * @return \Sonata\CoreBundle\Form\Type\ImmutableArrayType
      */
     protected function getSonata_Core_Form_Type_ArrayLegacyService()
     {
@@ -5407,12 +4475,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.boolean' service.
+     * Gets the public 'sonata.core.form.type.boolean' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\Form\Type\BooleanType A Sonata\Form\Type\BooleanType instance
+     * @return \Sonata\Form\Type\BooleanType
      */
     protected function getSonata_Core_Form_Type_BooleanService()
     {
@@ -5420,12 +4485,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.boolean_legacy' service.
+     * Gets the public 'sonata.core.form.type.boolean_legacy' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Form\Type\BooleanType A Sonata\CoreBundle\Form\Type\BooleanType instance
+     * @return \Sonata\CoreBundle\Form\Type\BooleanType
      */
     protected function getSonata_Core_Form_Type_BooleanLegacyService()
     {
@@ -5433,12 +4495,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.collection' service.
+     * Gets the public 'sonata.core.form.type.collection' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\Form\Type\CollectionType A Sonata\Form\Type\CollectionType instance
+     * @return \Sonata\Form\Type\CollectionType
      */
     protected function getSonata_Core_Form_Type_CollectionService()
     {
@@ -5446,12 +4505,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.collection_legacy' service.
+     * Gets the public 'sonata.core.form.type.collection_legacy' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Form\Type\CollectionType A Sonata\CoreBundle\Form\Type\CollectionType instance
+     * @return \Sonata\CoreBundle\Form\Type\CollectionType
      */
     protected function getSonata_Core_Form_Type_CollectionLegacyService()
     {
@@ -5459,12 +4515,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.color_legacy' service.
+     * Gets the public 'sonata.core.form.type.color_legacy' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Form\Type\ColorType A Sonata\CoreBundle\Form\Type\ColorType instance
+     * @return \Sonata\CoreBundle\Form\Type\ColorType
      */
     protected function getSonata_Core_Form_Type_ColorLegacyService()
     {
@@ -5472,12 +4525,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.color_selector' service.
+     * Gets the public 'sonata.core.form.type.color_selector' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Form\Type\ColorSelectorType A Sonata\CoreBundle\Form\Type\ColorSelectorType instance
+     * @return \Sonata\CoreBundle\Form\Type\ColorSelectorType
      *
      * @deprecated The "sonata.core.form.type.color_selector" service is deprecated since 3.5 and will be removed in 4.0.
      */
@@ -5489,12 +4539,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.date_picker' service.
+     * Gets the public 'sonata.core.form.type.date_picker' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\Form\Type\DatePickerType A Sonata\Form\Type\DatePickerType instance
+     * @return \Sonata\Form\Type\DatePickerType
      */
     protected function getSonata_Core_Form_Type_DatePickerService()
     {
@@ -5502,12 +4549,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.date_picker_legacy' service.
+     * Gets the public 'sonata.core.form.type.date_picker_legacy' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Form\Type\DatePickerType A Sonata\CoreBundle\Form\Type\DatePickerType instance
+     * @return \Sonata\CoreBundle\Form\Type\DatePickerType
      */
     protected function getSonata_Core_Form_Type_DatePickerLegacyService()
     {
@@ -5515,12 +4559,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.date_range' service.
+     * Gets the public 'sonata.core.form.type.date_range' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\Form\Type\DateRangeType A Sonata\Form\Type\DateRangeType instance
+     * @return \Sonata\Form\Type\DateRangeType
      */
     protected function getSonata_Core_Form_Type_DateRangeService()
     {
@@ -5528,12 +4569,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.date_range_legacy' service.
+     * Gets the public 'sonata.core.form.type.date_range_legacy' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Form\Type\DateRangeType A Sonata\CoreBundle\Form\Type\DateRangeType instance
+     * @return \Sonata\CoreBundle\Form\Type\DateRangeType
      */
     protected function getSonata_Core_Form_Type_DateRangeLegacyService()
     {
@@ -5541,12 +4579,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.date_range_picker' service.
+     * Gets the public 'sonata.core.form.type.date_range_picker' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\Form\Type\DateRangePickerType A Sonata\Form\Type\DateRangePickerType instance
+     * @return \Sonata\Form\Type\DateRangePickerType
      */
     protected function getSonata_Core_Form_Type_DateRangePickerService()
     {
@@ -5554,12 +4589,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.date_range_picker_legacy' service.
+     * Gets the public 'sonata.core.form.type.date_range_picker_legacy' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Form\Type\DateRangePickerType A Sonata\CoreBundle\Form\Type\DateRangePickerType instance
+     * @return \Sonata\CoreBundle\Form\Type\DateRangePickerType
      */
     protected function getSonata_Core_Form_Type_DateRangePickerLegacyService()
     {
@@ -5567,12 +4599,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.datetime_picker' service.
+     * Gets the public 'sonata.core.form.type.datetime_picker' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\Form\Type\DateTimePickerType A Sonata\Form\Type\DateTimePickerType instance
+     * @return \Sonata\Form\Type\DateTimePickerType
      */
     protected function getSonata_Core_Form_Type_DatetimePickerService()
     {
@@ -5580,12 +4609,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.datetime_picker_legacy' service.
+     * Gets the public 'sonata.core.form.type.datetime_picker_legacy' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Form\Type\DateTimePickerType A Sonata\CoreBundle\Form\Type\DateTimePickerType instance
+     * @return \Sonata\CoreBundle\Form\Type\DateTimePickerType
      */
     protected function getSonata_Core_Form_Type_DatetimePickerLegacyService()
     {
@@ -5593,12 +4619,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.datetime_range' service.
+     * Gets the public 'sonata.core.form.type.datetime_range' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\Form\Type\DateTimeRangeType A Sonata\Form\Type\DateTimeRangeType instance
+     * @return \Sonata\Form\Type\DateTimeRangeType
      */
     protected function getSonata_Core_Form_Type_DatetimeRangeService()
     {
@@ -5606,12 +4629,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.datetime_range_legacy' service.
+     * Gets the public 'sonata.core.form.type.datetime_range_legacy' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Form\Type\DateTimeRangeType A Sonata\CoreBundle\Form\Type\DateTimeRangeType instance
+     * @return \Sonata\CoreBundle\Form\Type\DateTimeRangeType
      */
     protected function getSonata_Core_Form_Type_DatetimeRangeLegacyService()
     {
@@ -5619,12 +4639,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.datetime_range_picker' service.
+     * Gets the public 'sonata.core.form.type.datetime_range_picker' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\Form\Type\DateTimeRangePickerType A Sonata\Form\Type\DateTimeRangePickerType instance
+     * @return \Sonata\Form\Type\DateTimeRangePickerType
      */
     protected function getSonata_Core_Form_Type_DatetimeRangePickerService()
     {
@@ -5632,12 +4649,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.datetime_range_picker_legacy' service.
+     * Gets the public 'sonata.core.form.type.datetime_range_picker_legacy' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Form\Type\DateTimeRangePickerType A Sonata\CoreBundle\Form\Type\DateTimeRangePickerType instance
+     * @return \Sonata\CoreBundle\Form\Type\DateTimeRangePickerType
      */
     protected function getSonata_Core_Form_Type_DatetimeRangePickerLegacyService()
     {
@@ -5645,12 +4659,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.equal' service.
+     * Gets the public 'sonata.core.form.type.equal' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\Form\Type\EqualType A Sonata\Form\Type\EqualType instance
+     * @return \Sonata\Form\Type\EqualType
      */
     protected function getSonata_Core_Form_Type_EqualService()
     {
@@ -5658,12 +4669,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.equal_legacy' service.
+     * Gets the public 'sonata.core.form.type.equal_legacy' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Form\Type\EqualType A Sonata\CoreBundle\Form\Type\EqualType instance
+     * @return \Sonata\CoreBundle\Form\Type\EqualType
      */
     protected function getSonata_Core_Form_Type_EqualLegacyService()
     {
@@ -5671,12 +4679,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.form.type.translatable_choice' service.
+     * Gets the public 'sonata.core.form.type.translatable_choice' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Form\Type\TranslatableChoiceType A Sonata\CoreBundle\Form\Type\TranslatableChoiceType instance
+     * @return \Sonata\CoreBundle\Form\Type\TranslatableChoiceType
      *
      * @deprecated The "sonata.core.form.type.translatable_choice" service is deprecated since 2.2.0 and will be removed in 4.0.
      */
@@ -5688,12 +4693,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.model.adapter.chain' service.
+     * Gets the public 'sonata.core.model.adapter.chain' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Model\Adapter\AdapterChain A Sonata\CoreBundle\Model\Adapter\AdapterChain instance
+     * @return \Sonata\CoreBundle\Model\Adapter\AdapterChain
      *
      * @deprecated The "sonata.core.model.adapter.chain" service is deprecated since 3.x and will be removed in 4.0.
      */
@@ -5703,18 +4705,15 @@ class appDevDebugProjectContainer extends Container
 
         $this->services['sonata.core.model.adapter.chain'] = $instance = new \Sonata\CoreBundle\Model\Adapter\AdapterChain();
 
-        $instance->addAdapter(new \Sonata\CoreBundle\Model\Adapter\DoctrineORMAdapter($this->get('doctrine', ContainerInterface::NULL_ON_INVALID_REFERENCE)));
+        $instance->addAdapter(${($_ = isset($this->services['sonata.core.model.adapter.doctrine_orm']) ? $this->services['sonata.core.model.adapter.doctrine_orm'] : $this->getSonata_Core_Model_Adapter_DoctrineOrmService()) && false ?: '_'});
 
         return $instance;
     }
 
     /**
-     * Gets the 'sonata.core.slugify.cocur' service.
+     * Gets the public 'sonata.core.slugify.cocur' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Cocur\Slugify\Slugify A Cocur\Slugify\Slugify instance
+     * @return \Cocur\Slugify\Slugify
      *
      * @deprecated The "sonata.core.slugify.cocur" service is deprecated. You should stop using it, as it will soon be removed.
      */
@@ -5726,12 +4725,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.slugify.native' service.
+     * Gets the public 'sonata.core.slugify.native' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Component\NativeSlugify A Sonata\CoreBundle\Component\NativeSlugify instance
+     * @return \Sonata\CoreBundle\Component\NativeSlugify
      *
      * @deprecated The "sonata.core.slugify.native" service is deprecated since 2.3 and will be removed in 4.0.
      */
@@ -5743,12 +4739,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.twig.deprecated_template_extension' service.
+     * Gets the public 'sonata.core.twig.deprecated_template_extension' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Twig\Extension\DeprecatedTemplateExtension A Sonata\CoreBundle\Twig\Extension\DeprecatedTemplateExtension instance
+     * @return \Sonata\CoreBundle\Twig\Extension\DeprecatedTemplateExtension
      */
     protected function getSonata_Core_Twig_DeprecatedTemplateExtensionService()
     {
@@ -5756,12 +4749,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.twig.extension.text' service.
+     * Gets the public 'sonata.core.twig.extension.text' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Twig\Extension\DeprecatedTextExtension A Sonata\CoreBundle\Twig\Extension\DeprecatedTextExtension instance
+     * @return \Sonata\CoreBundle\Twig\Extension\DeprecatedTextExtension
      */
     protected function getSonata_Core_Twig_Extension_TextService()
     {
@@ -5769,12 +4759,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.twig.extension.wrapping' service.
+     * Gets the public 'sonata.core.twig.extension.wrapping' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Twig\Extension\FormTypeExtension A Sonata\CoreBundle\Twig\Extension\FormTypeExtension instance
+     * @return \Sonata\CoreBundle\Twig\Extension\FormTypeExtension
      */
     protected function getSonata_Core_Twig_Extension_WrappingService()
     {
@@ -5782,12 +4769,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.twig.status_extension' service.
+     * Gets the public 'sonata.core.twig.status_extension' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Twig\Extension\StatusExtension A Sonata\CoreBundle\Twig\Extension\StatusExtension instance
+     * @return \Sonata\CoreBundle\Twig\Extension\StatusExtension
      */
     protected function getSonata_Core_Twig_StatusExtensionService()
     {
@@ -5795,12 +4779,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.twig.status_runtime' service.
+     * Gets the public 'sonata.core.twig.status_runtime' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Twig\Extension\StatusRuntime A Sonata\CoreBundle\Twig\Extension\StatusRuntime instance
+     * @return \Sonata\CoreBundle\Twig\Extension\StatusRuntime
      */
     protected function getSonata_Core_Twig_StatusRuntimeService()
     {
@@ -5812,12 +4793,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.twig.template_extension' service.
+     * Gets the public 'sonata.core.twig.template_extension' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Twig\Extension\TemplateExtension A Sonata\CoreBundle\Twig\Extension\TemplateExtension instance
+     * @return \Sonata\CoreBundle\Twig\Extension\TemplateExtension
      */
     protected function getSonata_Core_Twig_TemplateExtensionService()
     {
@@ -5825,12 +4803,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.core.validator.inline' service.
+     * Gets the public 'sonata.core.validator.inline' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Validator\InlineValidator A Sonata\CoreBundle\Validator\InlineValidator instance
+     * @return \Sonata\CoreBundle\Validator\InlineValidator
      */
     protected function getSonata_Core_Validator_InlineService()
     {
@@ -5838,12 +4813,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.templating' service.
+     * Gets the public 'sonata.templating' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Templating\TwigEngine A Sonata\BlockBundle\Templating\TwigEngine instance
+     * @return \Sonata\BlockBundle\Templating\TwigEngine
      */
     protected function getSonata_TemplatingService()
     {
@@ -5851,12 +4823,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.templating.locator' service.
+     * Gets the public 'sonata.templating.locator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Templating\TemplateLocator A Sonata\BlockBundle\Templating\TemplateLocator instance
+     * @return \Sonata\BlockBundle\Templating\TemplateLocator
      */
     protected function getSonata_Templating_LocatorService()
     {
@@ -5864,12 +4833,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata.templating.name_parser' service.
+     * Gets the public 'sonata.templating.name_parser' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Templating\TemplateNameParser A Sonata\BlockBundle\Templating\TemplateNameParser instance
+     * @return \Sonata\BlockBundle\Templating\TemplateNameParser
      */
     protected function getSonata_Templating_NameParserService()
     {
@@ -5877,12 +4843,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata\adminbundle\action\dashboardaction' service.
+     * Gets the public 'sonata\adminbundle\action\dashboardaction' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Action\DashboardAction A Sonata\AdminBundle\Action\DashboardAction instance
+     * @return \Sonata\AdminBundle\Action\DashboardAction
      */
     protected function getSonata_Adminbundle_Action_DashboardactionService()
     {
@@ -5894,12 +4857,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata\adminbundle\action\searchaction' service.
+     * Gets the public 'sonata\adminbundle\action\searchaction' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Action\SearchAction A Sonata\AdminBundle\Action\SearchAction instance
+     * @return \Sonata\AdminBundle\Action\SearchAction
      */
     protected function getSonata_Adminbundle_Action_SearchactionService()
     {
@@ -5911,12 +4871,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata\adminbundle\command\createclasscachecommand' service.
+     * Gets the public 'sonata\adminbundle\command\createclasscachecommand' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Command\CreateClassCacheCommand A Sonata\AdminBundle\Command\CreateClassCacheCommand instance
+     * @return \Sonata\AdminBundle\Command\CreateClassCacheCommand
      */
     protected function getSonata_Adminbundle_Command_CreateclasscachecommandService()
     {
@@ -5924,12 +4881,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata\adminbundle\command\explainadmincommand' service.
+     * Gets the public 'sonata\adminbundle\command\explainadmincommand' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Command\ExplainAdminCommand A Sonata\AdminBundle\Command\ExplainAdminCommand instance
+     * @return \Sonata\AdminBundle\Command\ExplainAdminCommand
      */
     protected function getSonata_Adminbundle_Command_ExplainadmincommandService()
     {
@@ -5937,12 +4891,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata\adminbundle\command\generateadmincommand' service.
+     * Gets the public 'sonata\adminbundle\command\generateadmincommand' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Command\GenerateAdminCommand A Sonata\AdminBundle\Command\GenerateAdminCommand instance
+     * @return \Sonata\AdminBundle\Command\GenerateAdminCommand
      */
     protected function getSonata_Adminbundle_Command_GenerateadmincommandService()
     {
@@ -5950,12 +4901,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata\adminbundle\command\generateobjectaclcommand' service.
+     * Gets the public 'sonata\adminbundle\command\generateobjectaclcommand' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Command\GenerateObjectAclCommand A Sonata\AdminBundle\Command\GenerateObjectAclCommand instance
+     * @return \Sonata\AdminBundle\Command\GenerateObjectAclCommand
      */
     protected function getSonata_Adminbundle_Command_GenerateobjectaclcommandService()
     {
@@ -5963,12 +4911,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata\adminbundle\command\listadmincommand' service.
+     * Gets the public 'sonata\adminbundle\command\listadmincommand' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Command\ListAdminCommand A Sonata\AdminBundle\Command\ListAdminCommand instance
+     * @return \Sonata\AdminBundle\Command\ListAdminCommand
      */
     protected function getSonata_Adminbundle_Command_ListadmincommandService()
     {
@@ -5976,12 +4921,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata\adminbundle\command\setupaclcommand' service.
+     * Gets the public 'sonata\adminbundle\command\setupaclcommand' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\AdminBundle\Command\SetupAclCommand A Sonata\AdminBundle\Command\SetupAclCommand instance
+     * @return \Sonata\AdminBundle\Command\SetupAclCommand
      */
     protected function getSonata_Adminbundle_Command_SetupaclcommandService()
     {
@@ -5989,12 +4931,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata\blockbundle\command\debugblockscommand' service.
+     * Gets the public 'sonata\blockbundle\command\debugblockscommand' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\BlockBundle\Command\DebugBlocksCommand A Sonata\BlockBundle\Command\DebugBlocksCommand instance
+     * @return \Sonata\BlockBundle\Command\DebugBlocksCommand
      */
     protected function getSonata_Blockbundle_Command_DebugblockscommandService()
     {
@@ -6002,12 +4941,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata\corebundle\command\sonatadumpdoctrinemetacommand' service.
+     * Gets the public 'sonata\corebundle\command\sonatadumpdoctrinemetacommand' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Command\SonataDumpDoctrineMetaCommand A Sonata\CoreBundle\Command\SonataDumpDoctrineMetaCommand instance
+     * @return \Sonata\CoreBundle\Command\SonataDumpDoctrineMetaCommand
      */
     protected function getSonata_Corebundle_Command_SonatadumpdoctrinemetacommandService()
     {
@@ -6015,12 +4951,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'sonata\corebundle\command\sonatalistformmappingcommand' service.
+     * Gets the public 'sonata\corebundle\command\sonatalistformmappingcommand' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Sonata\CoreBundle\Command\SonataListFormMappingCommand A Sonata\CoreBundle\Command\SonataListFormMappingCommand instance
+     * @return \Sonata\CoreBundle\Command\SonataListFormMappingCommand
      */
     protected function getSonata_Corebundle_Command_SonatalistformmappingcommandService()
     {
@@ -6028,12 +4961,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'streamed_response_listener' service.
+     * Gets the public 'streamed_response_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\EventListener\StreamedResponseListener A Symfony\Component\HttpKernel\EventListener\StreamedResponseListener instance
+     * @return \Symfony\Component\HttpKernel\EventListener\StreamedResponseListener
      */
     protected function getStreamedResponseListenerService()
     {
@@ -6041,12 +4971,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'swiftmailer.email_sender.listener' service.
+     * Gets the public 'swiftmailer.email_sender.listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\SwiftmailerBundle\EventListener\EmailSenderListener A Symfony\Bundle\SwiftmailerBundle\EventListener\EmailSenderListener instance
+     * @return \Symfony\Bundle\SwiftmailerBundle\EventListener\EmailSenderListener
      */
     protected function getSwiftmailer_EmailSender_ListenerService()
     {
@@ -6054,12 +4981,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'swiftmailer.mailer.default' service.
+     * Gets the public 'swiftmailer.mailer.default' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Swift_Mailer A Swift_Mailer instance
+     * @return \Swift_Mailer
      */
     protected function getSwiftmailer_Mailer_DefaultService()
     {
@@ -6067,12 +4991,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'swiftmailer.mailer.default.plugin.messagelogger' service.
+     * Gets the public 'swiftmailer.mailer.default.plugin.messagelogger' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Swift_Plugins_MessageLogger A Swift_Plugins_MessageLogger instance
+     * @return \Swift_Plugins_MessageLogger
      */
     protected function getSwiftmailer_Mailer_Default_Plugin_MessageloggerService()
     {
@@ -6080,12 +5001,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'swiftmailer.mailer.default.spool' service.
+     * Gets the public 'swiftmailer.mailer.default.spool' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Swift_MemorySpool A Swift_MemorySpool instance
+     * @return \Swift_MemorySpool
      */
     protected function getSwiftmailer_Mailer_Default_SpoolService()
     {
@@ -6093,12 +5011,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'swiftmailer.mailer.default.transport' service.
+     * Gets the public 'swiftmailer.mailer.default.transport' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Swift_Transport_SpoolTransport A Swift_Transport_SpoolTransport instance
+     * @return \Swift_Transport_SpoolTransport
      */
     protected function getSwiftmailer_Mailer_Default_TransportService()
     {
@@ -6110,12 +5025,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'swiftmailer.mailer.default.transport.real' service.
+     * Gets the public 'swiftmailer.mailer.default.transport.real' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Swift_Transport_EsmtpTransport A Swift_Transport_EsmtpTransport instance
+     * @return \Swift_Transport_EsmtpTransport
      */
     protected function getSwiftmailer_Mailer_Default_Transport_RealService()
     {
@@ -6137,12 +5049,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'templating' service.
+     * Gets the public 'templating' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\TwigBundle\TwigEngine A Symfony\Bundle\TwigBundle\TwigEngine instance
+     * @return \Symfony\Bundle\TwigBundle\TwigEngine
      */
     protected function getTemplatingService()
     {
@@ -6150,12 +5059,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'templating.filename_parser' service.
+     * Gets the public 'templating.filename_parser' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Templating\TemplateFilenameParser A Symfony\Bundle\FrameworkBundle\Templating\TemplateFilenameParser instance
+     * @return \Symfony\Bundle\FrameworkBundle\Templating\TemplateFilenameParser
      */
     protected function getTemplating_FilenameParserService()
     {
@@ -6163,12 +5069,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'templating.helper.logout_url' service.
+     * Gets the public 'templating.helper.logout_url' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\SecurityBundle\Templating\Helper\LogoutUrlHelper A Symfony\Bundle\SecurityBundle\Templating\Helper\LogoutUrlHelper instance
+     * @return \Symfony\Bundle\SecurityBundle\Templating\Helper\LogoutUrlHelper
      */
     protected function getTemplating_Helper_LogoutUrlService()
     {
@@ -6176,12 +5079,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'templating.helper.security' service.
+     * Gets the public 'templating.helper.security' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\SecurityBundle\Templating\Helper\SecurityHelper A Symfony\Bundle\SecurityBundle\Templating\Helper\SecurityHelper instance
+     * @return \Symfony\Bundle\SecurityBundle\Templating\Helper\SecurityHelper
      */
     protected function getTemplating_Helper_SecurityService()
     {
@@ -6189,12 +5089,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'templating.loader' service.
+     * Gets the public 'templating.loader' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Templating\Loader\FilesystemLoader A Symfony\Bundle\FrameworkBundle\Templating\Loader\FilesystemLoader instance
+     * @return \Symfony\Bundle\FrameworkBundle\Templating\Loader\FilesystemLoader
      */
     protected function getTemplating_LoaderService()
     {
@@ -6202,12 +5099,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'templating.name_parser' service.
+     * Gets the public 'templating.name_parser' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Templating\TemplateNameParser A Symfony\Bundle\FrameworkBundle\Templating\TemplateNameParser instance
+     * @return \Symfony\Bundle\FrameworkBundle\Templating\TemplateNameParser
      */
     protected function getTemplating_NameParserService()
     {
@@ -6215,12 +5109,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.dumper.csv' service.
+     * Gets the public 'translation.dumper.csv' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Dumper\CsvFileDumper A Symfony\Component\Translation\Dumper\CsvFileDumper instance
+     * @return \Symfony\Component\Translation\Dumper\CsvFileDumper
      */
     protected function getTranslation_Dumper_CsvService()
     {
@@ -6228,12 +5119,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.dumper.ini' service.
+     * Gets the public 'translation.dumper.ini' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Dumper\IniFileDumper A Symfony\Component\Translation\Dumper\IniFileDumper instance
+     * @return \Symfony\Component\Translation\Dumper\IniFileDumper
      */
     protected function getTranslation_Dumper_IniService()
     {
@@ -6241,12 +5129,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.dumper.json' service.
+     * Gets the public 'translation.dumper.json' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Dumper\JsonFileDumper A Symfony\Component\Translation\Dumper\JsonFileDumper instance
+     * @return \Symfony\Component\Translation\Dumper\JsonFileDumper
      */
     protected function getTranslation_Dumper_JsonService()
     {
@@ -6254,12 +5139,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.dumper.mo' service.
+     * Gets the public 'translation.dumper.mo' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Dumper\MoFileDumper A Symfony\Component\Translation\Dumper\MoFileDumper instance
+     * @return \Symfony\Component\Translation\Dumper\MoFileDumper
      */
     protected function getTranslation_Dumper_MoService()
     {
@@ -6267,12 +5149,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.dumper.php' service.
+     * Gets the public 'translation.dumper.php' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Dumper\PhpFileDumper A Symfony\Component\Translation\Dumper\PhpFileDumper instance
+     * @return \Symfony\Component\Translation\Dumper\PhpFileDumper
      */
     protected function getTranslation_Dumper_PhpService()
     {
@@ -6280,12 +5159,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.dumper.po' service.
+     * Gets the public 'translation.dumper.po' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Dumper\PoFileDumper A Symfony\Component\Translation\Dumper\PoFileDumper instance
+     * @return \Symfony\Component\Translation\Dumper\PoFileDumper
      */
     protected function getTranslation_Dumper_PoService()
     {
@@ -6293,12 +5169,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.dumper.qt' service.
+     * Gets the public 'translation.dumper.qt' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Dumper\QtFileDumper A Symfony\Component\Translation\Dumper\QtFileDumper instance
+     * @return \Symfony\Component\Translation\Dumper\QtFileDumper
      */
     protected function getTranslation_Dumper_QtService()
     {
@@ -6306,12 +5179,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.dumper.res' service.
+     * Gets the public 'translation.dumper.res' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Dumper\IcuResFileDumper A Symfony\Component\Translation\Dumper\IcuResFileDumper instance
+     * @return \Symfony\Component\Translation\Dumper\IcuResFileDumper
      */
     protected function getTranslation_Dumper_ResService()
     {
@@ -6319,12 +5189,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.dumper.xliff' service.
+     * Gets the public 'translation.dumper.xliff' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Dumper\XliffFileDumper A Symfony\Component\Translation\Dumper\XliffFileDumper instance
+     * @return \Symfony\Component\Translation\Dumper\XliffFileDumper
      */
     protected function getTranslation_Dumper_XliffService()
     {
@@ -6332,12 +5199,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.dumper.yml' service.
+     * Gets the public 'translation.dumper.yml' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Dumper\YamlFileDumper A Symfony\Component\Translation\Dumper\YamlFileDumper instance
+     * @return \Symfony\Component\Translation\Dumper\YamlFileDumper
      */
     protected function getTranslation_Dumper_YmlService()
     {
@@ -6345,12 +5209,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.extractor' service.
+     * Gets the public 'translation.extractor' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Extractor\ChainExtractor A Symfony\Component\Translation\Extractor\ChainExtractor instance
+     * @return \Symfony\Component\Translation\Extractor\ChainExtractor
      */
     protected function getTranslation_ExtractorService()
     {
@@ -6363,12 +5224,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.extractor.php' service.
+     * Gets the public 'translation.extractor.php' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Translation\PhpExtractor A Symfony\Bundle\FrameworkBundle\Translation\PhpExtractor instance
+     * @return \Symfony\Bundle\FrameworkBundle\Translation\PhpExtractor
      */
     protected function getTranslation_Extractor_PhpService()
     {
@@ -6376,12 +5234,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.loader' service.
+     * Gets the public 'translation.loader' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Translation\TranslationLoader A Symfony\Bundle\FrameworkBundle\Translation\TranslationLoader instance
+     * @return \Symfony\Bundle\FrameworkBundle\Translation\TranslationLoader
      */
     protected function getTranslation_LoaderService()
     {
@@ -6406,12 +5261,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.loader.csv' service.
+     * Gets the public 'translation.loader.csv' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Loader\CsvFileLoader A Symfony\Component\Translation\Loader\CsvFileLoader instance
+     * @return \Symfony\Component\Translation\Loader\CsvFileLoader
      */
     protected function getTranslation_Loader_CsvService()
     {
@@ -6419,12 +5271,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.loader.dat' service.
+     * Gets the public 'translation.loader.dat' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Loader\IcuDatFileLoader A Symfony\Component\Translation\Loader\IcuDatFileLoader instance
+     * @return \Symfony\Component\Translation\Loader\IcuDatFileLoader
      */
     protected function getTranslation_Loader_DatService()
     {
@@ -6432,12 +5281,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.loader.ini' service.
+     * Gets the public 'translation.loader.ini' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Loader\IniFileLoader A Symfony\Component\Translation\Loader\IniFileLoader instance
+     * @return \Symfony\Component\Translation\Loader\IniFileLoader
      */
     protected function getTranslation_Loader_IniService()
     {
@@ -6445,12 +5291,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.loader.json' service.
+     * Gets the public 'translation.loader.json' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Loader\JsonFileLoader A Symfony\Component\Translation\Loader\JsonFileLoader instance
+     * @return \Symfony\Component\Translation\Loader\JsonFileLoader
      */
     protected function getTranslation_Loader_JsonService()
     {
@@ -6458,12 +5301,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.loader.mo' service.
+     * Gets the public 'translation.loader.mo' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Loader\MoFileLoader A Symfony\Component\Translation\Loader\MoFileLoader instance
+     * @return \Symfony\Component\Translation\Loader\MoFileLoader
      */
     protected function getTranslation_Loader_MoService()
     {
@@ -6471,12 +5311,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.loader.php' service.
+     * Gets the public 'translation.loader.php' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Loader\PhpFileLoader A Symfony\Component\Translation\Loader\PhpFileLoader instance
+     * @return \Symfony\Component\Translation\Loader\PhpFileLoader
      */
     protected function getTranslation_Loader_PhpService()
     {
@@ -6484,12 +5321,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.loader.po' service.
+     * Gets the public 'translation.loader.po' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Loader\PoFileLoader A Symfony\Component\Translation\Loader\PoFileLoader instance
+     * @return \Symfony\Component\Translation\Loader\PoFileLoader
      */
     protected function getTranslation_Loader_PoService()
     {
@@ -6497,12 +5331,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.loader.qt' service.
+     * Gets the public 'translation.loader.qt' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Loader\QtFileLoader A Symfony\Component\Translation\Loader\QtFileLoader instance
+     * @return \Symfony\Component\Translation\Loader\QtFileLoader
      */
     protected function getTranslation_Loader_QtService()
     {
@@ -6510,12 +5341,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.loader.res' service.
+     * Gets the public 'translation.loader.res' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Loader\IcuResFileLoader A Symfony\Component\Translation\Loader\IcuResFileLoader instance
+     * @return \Symfony\Component\Translation\Loader\IcuResFileLoader
      */
     protected function getTranslation_Loader_ResService()
     {
@@ -6523,12 +5351,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.loader.xliff' service.
+     * Gets the public 'translation.loader.xliff' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Loader\XliffFileLoader A Symfony\Component\Translation\Loader\XliffFileLoader instance
+     * @return \Symfony\Component\Translation\Loader\XliffFileLoader
      */
     protected function getTranslation_Loader_XliffService()
     {
@@ -6536,12 +5361,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.loader.yml' service.
+     * Gets the public 'translation.loader.yml' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Loader\YamlFileLoader A Symfony\Component\Translation\Loader\YamlFileLoader instance
+     * @return \Symfony\Component\Translation\Loader\YamlFileLoader
      */
     protected function getTranslation_Loader_YmlService()
     {
@@ -6549,12 +5371,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translation.writer' service.
+     * Gets the public 'translation.writer' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\Writer\TranslationWriter A Symfony\Component\Translation\Writer\TranslationWriter instance
+     * @return \Symfony\Component\Translation\Writer\TranslationWriter
      */
     protected function getTranslation_WriterService()
     {
@@ -6575,12 +5394,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translator' service.
+     * Gets the public 'translator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Translation\DataCollectorTranslator A Symfony\Component\Translation\DataCollectorTranslator instance
+     * @return \Symfony\Component\Translation\DataCollectorTranslator
      */
     protected function getTranslatorService()
     {
@@ -6588,12 +5404,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translator.default' service.
+     * Gets the public 'translator.default' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Translation\Translator A Symfony\Bundle\FrameworkBundle\Translation\Translator instance
+     * @return \Symfony\Bundle\FrameworkBundle\Translation\Translator
      */
     protected function getTranslator_DefaultService()
     {
@@ -6606,12 +5419,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'translator_listener' service.
+     * Gets the public 'translator_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\EventListener\TranslatorListener A Symfony\Component\HttpKernel\EventListener\TranslatorListener instance
+     * @return \Symfony\Component\HttpKernel\EventListener\TranslatorListener
      */
     protected function getTranslatorListenerService()
     {
@@ -6619,12 +5429,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'twig' service.
+     * Gets the public 'twig' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Twig\Environment A Twig\Environment instance
+     * @return \Twig\Environment
      */
     protected function getTwigService()
     {
@@ -6690,12 +5497,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'twig.controller.exception' service.
+     * Gets the public 'twig.controller.exception' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\TwigBundle\Controller\ExceptionController A Symfony\Bundle\TwigBundle\Controller\ExceptionController instance
+     * @return \Symfony\Bundle\TwigBundle\Controller\ExceptionController
      */
     protected function getTwig_Controller_ExceptionService()
     {
@@ -6703,12 +5507,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'twig.controller.preview_error' service.
+     * Gets the public 'twig.controller.preview_error' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\TwigBundle\Controller\PreviewErrorController A Symfony\Bundle\TwigBundle\Controller\PreviewErrorController instance
+     * @return \Symfony\Bundle\TwigBundle\Controller\PreviewErrorController
      */
     protected function getTwig_Controller_PreviewErrorService()
     {
@@ -6716,12 +5517,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'twig.exception_listener' service.
+     * Gets the public 'twig.exception_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\EventListener\ExceptionListener A Symfony\Component\HttpKernel\EventListener\ExceptionListener instance
+     * @return \Symfony\Component\HttpKernel\EventListener\ExceptionListener
      */
     protected function getTwig_ExceptionListenerService()
     {
@@ -6729,12 +5527,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'twig.form.renderer' service.
+     * Gets the public 'twig.form.renderer' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Twig\Form\TwigRenderer A Symfony\Bridge\Twig\Form\TwigRenderer instance
+     * @return \Symfony\Bridge\Twig\Form\TwigRenderer
      */
     protected function getTwig_Form_RendererService()
     {
@@ -6742,12 +5537,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'twig.loader' service.
+     * Gets the public 'twig.loader' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\TwigBundle\Loader\FilesystemLoader A Symfony\Bundle\TwigBundle\Loader\FilesystemLoader instance
+     * @return \Symfony\Bundle\TwigBundle\Loader\FilesystemLoader
      */
     protected function getTwig_LoaderService()
     {
@@ -6774,12 +5566,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'twig.profile' service.
+     * Gets the public 'twig.profile' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Twig\Profiler\Profile A Twig\Profiler\Profile instance
+     * @return \Twig\Profiler\Profile
      */
     protected function getTwig_ProfileService()
     {
@@ -6787,12 +5576,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'twig.runtime.httpkernel' service.
+     * Gets the public 'twig.runtime.httpkernel' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Twig\Extension\HttpKernelRuntime A Symfony\Bridge\Twig\Extension\HttpKernelRuntime instance
+     * @return \Symfony\Bridge\Twig\Extension\HttpKernelRuntime
      */
     protected function getTwig_Runtime_HttpkernelService()
     {
@@ -6800,12 +5586,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'twig.translation.extractor' service.
+     * Gets the public 'twig.translation.extractor' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bridge\Twig\Translation\TwigExtractor A Symfony\Bridge\Twig\Translation\TwigExtractor instance
+     * @return \Symfony\Bridge\Twig\Translation\TwigExtractor
      */
     protected function getTwig_Translation_ExtractorService()
     {
@@ -6813,12 +5596,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'uri_signer' service.
+     * Gets the public 'uri_signer' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\UriSigner A Symfony\Component\HttpKernel\UriSigner instance
+     * @return \Symfony\Component\HttpKernel\UriSigner
      */
     protected function getUriSignerService()
     {
@@ -6826,12 +5606,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'validate_request_listener' service.
+     * Gets the public 'validate_request_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\HttpKernel\EventListener\ValidateRequestListener A Symfony\Component\HttpKernel\EventListener\ValidateRequestListener instance
+     * @return \Symfony\Component\HttpKernel\EventListener\ValidateRequestListener
      */
     protected function getValidateRequestListenerService()
     {
@@ -6839,12 +5616,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'validator' service.
+     * Gets the public 'validator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Validator\Validator\ValidatorInterface A Symfony\Component\Validator\Validator\ValidatorInterface instance
+     * @return \Symfony\Component\Validator\Validator\ValidatorInterface
      */
     protected function getValidatorService()
     {
@@ -6852,12 +5626,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'validator.builder' service.
+     * Gets the public 'validator.builder' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Validator\ValidatorBuilderInterface A Symfony\Component\Validator\ValidatorBuilderInterface instance
+     * @return \Symfony\Component\Validator\ValidatorBuilderInterface
      */
     protected function getValidator_BuilderService()
     {
@@ -6876,12 +5647,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'validator.email' service.
+     * Gets the public 'validator.email' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Validator\Constraints\EmailValidator A Symfony\Component\Validator\Constraints\EmailValidator instance
+     * @return \Symfony\Component\Validator\Constraints\EmailValidator
      */
     protected function getValidator_EmailService()
     {
@@ -6889,12 +5657,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'validator.expression' service.
+     * Gets the public 'validator.expression' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\Validator\Constraints\ExpressionValidator A Symfony\Component\Validator\Constraints\ExpressionValidator instance
+     * @return \Symfony\Component\Validator\Constraints\ExpressionValidator
      */
     protected function getValidator_ExpressionService()
     {
@@ -6902,12 +5667,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'var_dumper.cli_dumper' service.
+     * Gets the public 'var_dumper.cli_dumper' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\VarDumper\Dumper\CliDumper A Symfony\Component\VarDumper\Dumper\CliDumper instance
+     * @return \Symfony\Component\VarDumper\Dumper\CliDumper
      */
     protected function getVarDumper_CliDumperService()
     {
@@ -6915,12 +5677,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'var_dumper.cloner' service.
+     * Gets the public 'var_dumper.cloner' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Component\VarDumper\Cloner\VarCloner A Symfony\Component\VarDumper\Cloner\VarCloner instance
+     * @return \Symfony\Component\VarDumper\Cloner\VarCloner
      */
     protected function getVarDumper_ClonerService()
     {
@@ -6933,12 +5692,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'web_profiler.controller.exception' service.
+     * Gets the public 'web_profiler.controller.exception' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\WebProfilerBundle\Controller\ExceptionController A Symfony\Bundle\WebProfilerBundle\Controller\ExceptionController instance
+     * @return \Symfony\Bundle\WebProfilerBundle\Controller\ExceptionController
      */
     protected function getWebProfiler_Controller_ExceptionService()
     {
@@ -6946,12 +5702,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'web_profiler.controller.profiler' service.
+     * Gets the public 'web_profiler.controller.profiler' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController A Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController instance
+     * @return \Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController
      */
     protected function getWebProfiler_Controller_ProfilerService()
     {
@@ -6959,12 +5712,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'web_profiler.controller.router' service.
+     * Gets the public 'web_profiler.controller.router' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\WebProfilerBundle\Controller\RouterController A Symfony\Bundle\WebProfilerBundle\Controller\RouterController instance
+     * @return \Symfony\Bundle\WebProfilerBundle\Controller\RouterController
      */
     protected function getWebProfiler_Controller_RouterService()
     {
@@ -6972,12 +5722,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'web_profiler.debug_toolbar' service.
+     * Gets the public 'web_profiler.debug_toolbar' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return \Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener A Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener instance
+     * @return \Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener
      */
     protected function getWebProfiler_DebugToolbarService()
     {
@@ -6985,16 +5732,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'annotations.reader' service.
+     * Gets the private 'annotations.reader' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Doctrine\Common\Annotations\AnnotationReader A Doctrine\Common\Annotations\AnnotationReader instance
+     * @return \Doctrine\Common\Annotations\AnnotationReader
      */
     protected function getAnnotations_ReaderService()
     {
@@ -7002,33 +5742,19 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'cache.annotations' service.
+     * Gets the private 'cache.annotations' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\Cache\Adapter\AdapterInterface A Symfony\Component\Cache\Adapter\AdapterInterface instance
+     * @return \Symfony\Component\Cache\Adapter\AdapterInterface
      */
     protected function getCache_AnnotationsService()
     {
-        return $this->services['cache.annotations'] = \Symfony\Component\Cache\Adapter\AbstractAdapter::createSystemCache('bn8OfKb-cS', 0, '88Kd2Oca2RCtQpebjCEIao', (__DIR__.'/pools'), $this->get('monolog.logger.cache', ContainerInterface::NULL_ON_INVALID_REFERENCE));
+        return $this->services['cache.annotations'] = \Symfony\Component\Cache\Adapter\AbstractAdapter::createSystemCache('bn8OfKb-cS', 0, 'CY816Ro+UbtGzNNmZho8gT', (__DIR__.'/pools'), $this->get('monolog.logger.cache', ContainerInterface::NULL_ON_INVALID_REFERENCE));
     }
 
     /**
-     * Gets the 'controller_name_converter' service.
+     * Gets the private 'controller_name_converter' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Controller\ControllerNameParser A Symfony\Bundle\FrameworkBundle\Controller\ControllerNameParser instance
+     * @return \Symfony\Bundle\FrameworkBundle\Controller\ControllerNameParser
      */
     protected function getControllerNameConverterService()
     {
@@ -7036,16 +5762,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'debug.file_link_formatter' service.
+     * Gets the private 'debug.file_link_formatter' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\HttpKernel\Debug\FileLinkFormatter A Symfony\Component\HttpKernel\Debug\FileLinkFormatter instance
+     * @return \Symfony\Component\HttpKernel\Debug\FileLinkFormatter
      */
     protected function getDebug_FileLinkFormatterService()
     {
@@ -7053,16 +5772,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'debug.log_processor' service.
+     * Gets the private 'debug.log_processor' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Bridge\Monolog\Processor\DebugProcessor A Symfony\Bridge\Monolog\Processor\DebugProcessor instance
+     * @return \Symfony\Bridge\Monolog\Processor\DebugProcessor
      */
     protected function getDebug_LogProcessorService()
     {
@@ -7070,16 +5782,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'debug.security.access.decision_manager' service.
+     * Gets the private 'debug.security.access.decision_manager' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\Security\Core\Authorization\DebugAccessDecisionManager A Symfony\Component\Security\Core\Authorization\DebugAccessDecisionManager instance
+     * @return \Symfony\Component\Security\Core\Authorization\DebugAccessDecisionManager
      */
     protected function getDebug_Security_Access_DecisionManagerService()
     {
@@ -7094,16 +5799,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'doctrine.dbal.logger.profiling.default' service.
+     * Gets the private 'doctrine.dbal.logger.profiling.default' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Doctrine\DBAL\Logging\DebugStack A Doctrine\DBAL\Logging\DebugStack instance
+     * @return \Doctrine\DBAL\Logging\DebugStack
      */
     protected function getDoctrine_Dbal_Logger_Profiling_DefaultService()
     {
@@ -7111,16 +5809,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'form.server_params' service.
+     * Gets the private 'form.server_params' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\Form\Util\ServerParams A Symfony\Component\Form\Util\ServerParams instance
+     * @return \Symfony\Component\Form\Util\ServerParams
      */
     protected function getForm_ServerParamsService()
     {
@@ -7128,16 +5819,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.user_provider.username' service.
+     * Gets the private 'fos_user.user_provider.username' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \FOS\UserBundle\Security\UserProvider A FOS\UserBundle\Security\UserProvider instance
+     * @return \FOS\UserBundle\Security\UserProvider
      */
     protected function getFosUser_UserProvider_UsernameService()
     {
@@ -7145,16 +5829,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.util.canonical_fields_updater' service.
+     * Gets the private 'fos_user.util.canonical_fields_updater' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \FOS\UserBundle\Util\CanonicalFieldsUpdater A FOS\UserBundle\Util\CanonicalFieldsUpdater instance
+     * @return \FOS\UserBundle\Util\CanonicalFieldsUpdater
      */
     protected function getFosUser_Util_CanonicalFieldsUpdaterService()
     {
@@ -7164,16 +5841,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'fos_user.util.password_updater' service.
+     * Gets the private 'fos_user.util.password_updater' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \FOS\UserBundle\Util\PasswordUpdater A FOS\UserBundle\Util\PasswordUpdater instance
+     * @return \FOS\UserBundle\Util\PasswordUpdater
      */
     protected function getFosUser_Util_PasswordUpdaterService()
     {
@@ -7181,16 +5851,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'monolog.processor.psr_log_message' service.
+     * Gets the private 'monolog.processor.psr_log_message' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Monolog\Processor\PsrLogMessageProcessor A Monolog\Processor\PsrLogMessageProcessor instance
+     * @return \Monolog\Processor\PsrLogMessageProcessor
      */
     protected function getMonolog_Processor_PsrLogMessageService()
     {
@@ -7198,16 +5861,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'router.request_context' service.
+     * Gets the private 'router.request_context' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\Routing\RequestContext A Symfony\Component\Routing\RequestContext instance
+     * @return \Symfony\Component\Routing\RequestContext
      */
     protected function getRouter_RequestContextService()
     {
@@ -7215,16 +5871,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.access_listener' service.
+     * Gets the private 'security.access_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\Security\Http\Firewall\AccessListener A Symfony\Component\Security\Http\Firewall\AccessListener instance
+     * @return \Symfony\Component\Security\Http\Firewall\AccessListener
      */
     protected function getSecurity_AccessListenerService()
     {
@@ -7232,16 +5881,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.access_map' service.
+     * Gets the private 'security.access_map' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\Security\Http\AccessMap A Symfony\Component\Security\Http\AccessMap instance
+     * @return \Symfony\Component\Security\Http\AccessMap
      */
     protected function getSecurity_AccessMapService()
     {
@@ -7258,16 +5900,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.authentication.manager' service.
+     * Gets the private 'security.authentication.manager' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager A Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager instance
+     * @return \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager
      */
     protected function getSecurity_Authentication_ManagerService()
     {
@@ -7275,7 +5910,7 @@ class appDevDebugProjectContainer extends Container
         $b = ${($_ = isset($this->services['security.user_checker']) ? $this->services['security.user_checker'] : $this->getSecurity_UserCheckerService()) && false ?: '_'};
         $c = $this->get('security.encoder_factory');
 
-        $this->services['security.authentication.manager'] = $instance = new \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager(array(0 => new \Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider($a, $b, 'login', $c, true), 1 => new \Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider('644147076a6636.35785436'), 2 => new \Symfony\Component\Security\Guard\Provider\GuardAuthenticationProvider(array(0 => $this->get('lexik_jwt_authentication.security.guard.jwt_token_authenticator')), $a, 'api', $b), 3 => new \Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider($a, $b, 'main', $c, true), 4 => new \Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider('644147076a6636.35785436')), true);
+        $this->services['security.authentication.manager'] = $instance = new \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager(array(0 => new \Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider($a, $b, 'login', $c, true), 1 => new \Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider('6442955d63a681.81260595'), 2 => new \Symfony\Component\Security\Guard\Provider\GuardAuthenticationProvider(array(0 => $this->get('lexik_jwt_authentication.security.guard.jwt_token_authenticator')), $a, 'api', $b), 3 => new \Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider($a, $b, 'main', $c, true), 4 => new \Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider('6442955d63a681.81260595')), true);
 
         $instance->setEventDispatcher($this->get('debug.event_dispatcher'));
 
@@ -7283,16 +5918,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.authentication.session_strategy' service.
+     * Gets the private 'security.authentication.session_strategy' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\Security\Http\Session\SessionAuthenticationStrategy A Symfony\Component\Security\Http\Session\SessionAuthenticationStrategy instance
+     * @return \Symfony\Component\Security\Http\Session\SessionAuthenticationStrategy
      */
     protected function getSecurity_Authentication_SessionStrategyService()
     {
@@ -7300,16 +5928,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.authentication.trust_resolver' service.
+     * Gets the private 'security.authentication.trust_resolver' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolver A Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolver instance
+     * @return \Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolver
      */
     protected function getSecurity_Authentication_TrustResolverService()
     {
@@ -7317,16 +5938,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.channel_listener' service.
+     * Gets the private 'security.channel_listener' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\Security\Http\Firewall\ChannelListener A Symfony\Component\Security\Http\Firewall\ChannelListener instance
+     * @return \Symfony\Component\Security\Http\Firewall\ChannelListener
      */
     protected function getSecurity_ChannelListenerService()
     {
@@ -7334,16 +5948,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.firewall.map' service.
+     * Gets the private 'security.firewall.map' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Bundle\SecurityBundle\Security\FirewallMap A Symfony\Bundle\SecurityBundle\Security\FirewallMap instance
+     * @return \Symfony\Bundle\SecurityBundle\Security\FirewallMap
      */
     protected function getSecurity_Firewall_MapService()
     {
@@ -7351,35 +5958,21 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.http_utils' service.
+     * Gets the private 'security.http_utils' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\Security\Http\HttpUtils A Symfony\Component\Security\Http\HttpUtils instance
+     * @return \Symfony\Component\Security\Http\HttpUtils
      */
     protected function getSecurity_HttpUtilsService()
     {
         $a = $this->get('router', ContainerInterface::NULL_ON_INVALID_REFERENCE);
 
-        return $this->services['security.http_utils'] = new \Symfony\Component\Security\Http\HttpUtils($a, $a);
+        return $this->services['security.http_utils'] = new \Symfony\Component\Security\Http\HttpUtils($a, $a, '{^https?://%s$}i');
     }
 
     /**
-     * Gets the 'security.logout_url_generator' service.
+     * Gets the private 'security.logout_url_generator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\Security\Http\Logout\LogoutUrlGenerator A Symfony\Component\Security\Http\Logout\LogoutUrlGenerator instance
+     * @return \Symfony\Component\Security\Http\Logout\LogoutUrlGenerator
      */
     protected function getSecurity_LogoutUrlGeneratorService()
     {
@@ -7391,16 +5984,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.role_hierarchy' service.
+     * Gets the private 'security.role_hierarchy' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\Security\Core\Role\RoleHierarchy A Symfony\Component\Security\Core\Role\RoleHierarchy instance
+     * @return \Symfony\Component\Security\Core\Role\RoleHierarchy
      */
     protected function getSecurity_RoleHierarchyService()
     {
@@ -7408,16 +5994,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.user_checker' service.
+     * Gets the private 'security.user_checker' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\Security\Core\User\UserChecker A Symfony\Component\Security\Core\User\UserChecker instance
+     * @return \Symfony\Component\Security\Core\User\UserChecker
      */
     protected function getSecurity_UserCheckerService()
     {
@@ -7425,16 +6004,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'session.storage.metadata_bag' service.
+     * Gets the private 'session.storage.metadata_bag' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Component\HttpFoundation\Session\Storage\MetadataBag A Symfony\Component\HttpFoundation\Session\Storage\MetadataBag instance
+     * @return \Symfony\Component\HttpFoundation\Session\Storage\MetadataBag
      */
     protected function getSession_Storage_MetadataBagService()
     {
@@ -7442,16 +6014,23 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'swiftmailer.mailer.default.transport.eventdispatcher' service.
+     * Gets the private 'sonata.core.model.adapter.doctrine_orm' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
+     * @return \Sonata\CoreBundle\Model\Adapter\DoctrineORMAdapter
      *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
+     * @deprecated The "sonata.core.model.adapter.doctrine_orm" service is deprecated since 3.x and will be removed in 4.0.
+     */
+    protected function getSonata_Core_Model_Adapter_DoctrineOrmService()
+    {
+        @trigger_error('The "sonata.core.model.adapter.doctrine_orm" service is deprecated since 3.x and will be removed in 4.0.', E_USER_DEPRECATED);
+
+        return $this->services['sonata.core.model.adapter.doctrine_orm'] = new \Sonata\CoreBundle\Model\Adapter\DoctrineORMAdapter($this->get('doctrine', ContainerInterface::NULL_ON_INVALID_REFERENCE));
+    }
+
+    /**
+     * Gets the private 'swiftmailer.mailer.default.transport.eventdispatcher' shared service.
      *
-     * @return \Swift_Events_SimpleEventDispatcher A Swift_Events_SimpleEventDispatcher instance
+     * @return \Swift_Events_SimpleEventDispatcher
      */
     protected function getSwiftmailer_Mailer_Default_Transport_EventdispatcherService()
     {
@@ -7459,16 +6038,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'templating.locator' service.
+     * Gets the private 'templating.locator' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Templating\Loader\TemplateLocator A Symfony\Bundle\FrameworkBundle\Templating\Loader\TemplateLocator instance
+     * @return \Symfony\Bundle\FrameworkBundle\Templating\Loader\TemplateLocator
      */
     protected function getTemplating_LocatorService()
     {
@@ -7476,16 +6048,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'validator.validator_factory' service.
+     * Gets the private 'validator.validator_factory' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Validator\ConstraintValidatorFactory A Symfony\Bundle\FrameworkBundle\Validator\ConstraintValidatorFactory instance
+     * @return \Symfony\Bundle\FrameworkBundle\Validator\ConstraintValidatorFactory
      */
     protected function getValidator_ValidatorFactoryService()
     {
@@ -7493,16 +6058,9 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'web_profiler.csp.handler' service.
+     * Gets the private 'web_profiler.csp.handler' shared service.
      *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * This service is private.
-     * If you want to be able to request this service from the container directly,
-     * make it public, otherwise you might end up with broken code.
-     *
-     * @return \Symfony\Bundle\WebProfilerBundle\Csp\ContentSecurityPolicyHandler A Symfony\Bundle\WebProfilerBundle\Csp\ContentSecurityPolicyHandler instance
+     * @return \Symfony\Bundle\WebProfilerBundle\Csp\ContentSecurityPolicyHandler
      */
     protected function getWebProfiler_Csp_HandlerService()
     {
@@ -7566,10 +6124,12 @@ class appDevDebugProjectContainer extends Container
         'kernel.bundles_metadata' => false,
         'jwt_private_key_path' => false,
         'jwt_public_key_path' => false,
+        'kernel.project_dir' => false,
         'session.save_path' => false,
         'router.resource' => false,
         'lexik_jwt_authentication.private_key_path' => false,
         'lexik_jwt_authentication.public_key_path' => false,
+        'doctrine_migrations.dir_name' => false,
     );
     private $dynamicParameters = array();
 
@@ -7663,6 +6223,11 @@ class appDevDebugProjectContainer extends Container
                     'path' => ($this->targetDirs[3].'/src/AppBundle'),
                     'namespace' => 'AppBundle',
                 ),
+                'DoctrineMigrationsBundle' => array(
+                    'parent' => NULL,
+                    'path' => ($this->targetDirs[3].'/vendor/doctrine/doctrine-migrations-bundle'),
+                    'namespace' => 'Doctrine\\Bundle\\MigrationsBundle',
+                ),
                 'DebugBundle' => array(
                     'parent' => NULL,
                     'path' => ($this->targetDirs[3].'/vendor/symfony/symfony/src/Symfony/Bundle/DebugBundle'),
@@ -7691,10 +6256,12 @@ class appDevDebugProjectContainer extends Container
             ); break;
             case 'jwt_private_key_path': $value = ($this->targetDirs[3].'/app/../var/jwt/private.pem'); break;
             case 'jwt_public_key_path': $value = ($this->targetDirs[3].'/app/../var/jwt/public.pem'); break;
+            case 'kernel.project_dir': $value = $this->targetDirs[3]; break;
             case 'session.save_path': $value = ($this->targetDirs[3].'/app/../var/sessions/dev'); break;
             case 'router.resource': $value = ($this->targetDirs[3].'/app/config/routing_dev.yml'); break;
             case 'lexik_jwt_authentication.private_key_path': $value = ($this->targetDirs[3].'/app/../var/jwt/private.pem'); break;
             case 'lexik_jwt_authentication.public_key_path': $value = ($this->targetDirs[3].'/app/../var/jwt/public.pem'); break;
+            case 'doctrine_migrations.dir_name': $value = ($this->targetDirs[3].'/src/Migrations'); break;
             default: throw new InvalidArgumentException(sprintf('The dynamic parameter "%s" must be defined.', $name));
         }
         $this->loadedDynamicParameters[$name] = true;
@@ -7730,6 +6297,7 @@ class appDevDebugProjectContainer extends Container
                 'LexikJWTAuthenticationBundle' => 'Lexik\\Bundle\\JWTAuthenticationBundle\\LexikJWTAuthenticationBundle',
                 'FOSUserBundle' => 'FOS\\UserBundle\\FOSUserBundle',
                 'AppBundle' => 'AppBundle\\AppBundle',
+                'DoctrineMigrationsBundle' => 'Doctrine\\Bundle\\MigrationsBundle\\DoctrineMigrationsBundle',
                 'DebugBundle' => 'Symfony\\Bundle\\DebugBundle\\DebugBundle',
                 'WebProfilerBundle' => 'Symfony\\Bundle\\WebProfilerBundle\\WebProfilerBundle',
                 'SensioDistributionBundle' => 'Sensio\\Bundle\\DistributionBundle\\SensioDistributionBundle',
@@ -8286,6 +6854,9 @@ class appDevDebugProjectContainer extends Container
                 0 => 'ResetPassword',
                 1 => 'Default',
             ),
+            'doctrine_migrations.namespace' => 'AppBundle\\Migrations',
+            'doctrine_migrations.table_name' => 'migration_versions',
+            'doctrine_migrations.name' => 'Application Migrations',
             'web_profiler.debug_toolbar.position' => 'bottom',
             'web_profiler.debug_toolbar.intercept_redirects' => false,
             'web_profiler.debug_toolbar.mode' => 2,
@@ -8467,4 +7038,614 @@ class appDevDebugProjectContainer extends Container
             ),
         );
     }
+}
+
+class DoctrineORMEntityManager_000000001892f83600005571671295d09e859757b8063d0762c0ae6ec4090d6d extends \Doctrine\ORM\EntityManager implements \ProxyManager\Proxy\VirtualProxyInterface
+{
+
+    /**
+     * @var \Closure|null initializer responsible for generating the wrapped object
+     */
+    private $valueHolder6442955ddc0e4400236845 = null;
+
+    /**
+     * @var \Closure|null initializer responsible for generating the wrapped object
+     */
+    private $initializer6442955ddc0f0682900613 = null;
+
+    /**
+     * @var bool[] map of public properties of the parent class
+     */
+    private static $publicProperties6442955ddc0c8042965648 = array(
+        
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getConnection()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'getConnection', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->getConnection();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMetadataFactory()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'getMetadataFactory', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->getMetadataFactory();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getExpressionBuilder()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'getExpressionBuilder', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->getExpressionBuilder();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function beginTransaction()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'beginTransaction', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->beginTransaction();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCache()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'getCache', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->getCache();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function transactional($func)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'transactional', array('func' => $func), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->transactional($func);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function commit()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'commit', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->commit();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function rollback()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'rollback', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->rollback();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getClassMetadata($className)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'getClassMetadata', array('className' => $className), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->getClassMetadata($className);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function createQuery($dql = '')
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'createQuery', array('dql' => $dql), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->createQuery($dql);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function createNamedQuery($name)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'createNamedQuery', array('name' => $name), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->createNamedQuery($name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function createNativeQuery($sql, \Doctrine\ORM\Query\ResultSetMapping $rsm)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'createNativeQuery', array('sql' => $sql, 'rsm' => $rsm), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->createNativeQuery($sql, $rsm);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function createNamedNativeQuery($name)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'createNamedNativeQuery', array('name' => $name), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->createNamedNativeQuery($name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function createQueryBuilder()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'createQueryBuilder', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->createQueryBuilder();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function flush($entity = null)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'flush', array('entity' => $entity), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->flush($entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function find($entityName, $id, $lockMode = null, $lockVersion = null)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'find', array('entityName' => $entityName, 'id' => $id, 'lockMode' => $lockMode, 'lockVersion' => $lockVersion), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->find($entityName, $id, $lockMode, $lockVersion);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getReference($entityName, $id)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'getReference', array('entityName' => $entityName, 'id' => $id), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->getReference($entityName, $id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPartialReference($entityName, $identifier)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'getPartialReference', array('entityName' => $entityName, 'identifier' => $identifier), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->getPartialReference($entityName, $identifier);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function clear($entityName = null)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'clear', array('entityName' => $entityName), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->clear($entityName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function close()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'close', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->close();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function persist($entity)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'persist', array('entity' => $entity), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->persist($entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function remove($entity)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'remove', array('entity' => $entity), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->remove($entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function refresh($entity)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'refresh', array('entity' => $entity), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->refresh($entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function detach($entity)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'detach', array('entity' => $entity), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->detach($entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function merge($entity)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'merge', array('entity' => $entity), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->merge($entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function copy($entity, $deep = false)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'copy', array('entity' => $entity, 'deep' => $deep), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->copy($entity, $deep);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function lock($entity, $lockMode, $lockVersion = null)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'lock', array('entity' => $entity, 'lockMode' => $lockMode, 'lockVersion' => $lockVersion), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->lock($entity, $lockMode, $lockVersion);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getRepository($entityName)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'getRepository', array('entityName' => $entityName), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->getRepository($entityName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function contains($entity)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'contains', array('entity' => $entity), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->contains($entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getEventManager()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'getEventManager', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->getEventManager();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getConfiguration()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'getConfiguration', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->getConfiguration();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isOpen()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'isOpen', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->isOpen();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getUnitOfWork()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'getUnitOfWork', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->getUnitOfWork();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getHydrator($hydrationMode)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'getHydrator', array('hydrationMode' => $hydrationMode), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->getHydrator($hydrationMode);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function newHydrator($hydrationMode)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'newHydrator', array('hydrationMode' => $hydrationMode), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->newHydrator($hydrationMode);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getProxyFactory()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'getProxyFactory', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->getProxyFactory();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function initializeObject($obj)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'initializeObject', array('obj' => $obj), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->initializeObject($obj);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFilters()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'getFilters', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->getFilters();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isFiltersStateClean()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'isFiltersStateClean', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->isFiltersStateClean();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasFilters()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'hasFilters', array(), $this->initializer6442955ddc0f0682900613);
+
+        return $this->valueHolder6442955ddc0e4400236845->hasFilters();
+    }
+
+    /**
+     * @override constructor for lazy initialization
+     *
+     * @param \Closure|null $initializer
+     */
+    public function __construct($initializer)
+    {
+        $this->initializer6442955ddc0f0682900613 = $initializer;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function & __get($name)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, '__get', array('name' => $name), $this->initializer6442955ddc0f0682900613);
+
+        if (isset(self::$publicProperties6442955ddc0c8042965648[$name])) {
+            return $this->valueHolder6442955ddc0e4400236845->$name;
+        }
+
+        $realInstanceReflection = new \ReflectionClass(get_parent_class($this));
+
+        if (! $realInstanceReflection->hasProperty($name)) {
+            $targetObject = $this->valueHolder6442955ddc0e4400236845;
+
+            $backtrace = debug_backtrace(false);
+            trigger_error('Undefined property: ' . get_parent_class($this) . '::$' . $name . ' in ' . $backtrace[0]['file'] . ' on line ' . $backtrace[0]['line'], \E_USER_NOTICE);
+            return $targetObject->$name;;
+            return;
+        }
+
+        $targetObject = $this->valueHolder6442955ddc0e4400236845;
+        $accessor = function & () use ($targetObject, $name) {
+            return $targetObject->$name;
+        };
+            $backtrace = debug_backtrace(true);
+            $scopeObject = isset($backtrace[1]['object']) ? $backtrace[1]['object'] : new \stdClass();
+            $accessor = $accessor->bindTo($scopeObject, get_class($scopeObject));
+        $returnValue = & $accessor();
+
+        return $returnValue;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, '__set', array('name' => $name, 'value' => $value), $this->initializer6442955ddc0f0682900613);
+
+        $realInstanceReflection = new \ReflectionClass(get_parent_class($this));
+
+        if (! $realInstanceReflection->hasProperty($name)) {
+            $targetObject = $this->valueHolder6442955ddc0e4400236845;
+
+            return $targetObject->$name = $value;;
+            return;
+        }
+
+        $targetObject = $this->valueHolder6442955ddc0e4400236845;
+        $accessor = function & () use ($targetObject, $name, $value) {
+            return $targetObject->$name = $value;
+        };
+            $backtrace = debug_backtrace(true);
+            $scopeObject = isset($backtrace[1]['object']) ? $backtrace[1]['object'] : new \stdClass();
+            $accessor = $accessor->bindTo($scopeObject, get_class($scopeObject));
+        $returnValue = & $accessor();
+
+        return $returnValue;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function __isset($name)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, '__isset', array('name' => $name), $this->initializer6442955ddc0f0682900613);
+
+        $realInstanceReflection = new \ReflectionClass(get_parent_class($this));
+
+        if (! $realInstanceReflection->hasProperty($name)) {
+            $targetObject = $this->valueHolder6442955ddc0e4400236845;
+
+            return isset($targetObject->$name);;
+            return;
+        }
+
+        $targetObject = $this->valueHolder6442955ddc0e4400236845;
+        $accessor = function () use ($targetObject, $name) {
+            return isset($targetObject->$name);
+        };
+            $backtrace = debug_backtrace(true);
+            $scopeObject = isset($backtrace[1]['object']) ? $backtrace[1]['object'] : new \stdClass();
+            $accessor = $accessor->bindTo($scopeObject, get_class($scopeObject));
+        $returnValue = $accessor();
+
+        return $returnValue;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function __unset($name)
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, '__unset', array('name' => $name), $this->initializer6442955ddc0f0682900613);
+
+        $realInstanceReflection = new \ReflectionClass(get_parent_class($this));
+
+        if (! $realInstanceReflection->hasProperty($name)) {
+            $targetObject = $this->valueHolder6442955ddc0e4400236845;
+
+            unset($targetObject->$name);;
+            return;
+        }
+
+        $targetObject = $this->valueHolder6442955ddc0e4400236845;
+        $accessor = function () use ($targetObject, $name) {
+            unset($targetObject->$name);
+        };
+            $backtrace = debug_backtrace(true);
+            $scopeObject = isset($backtrace[1]['object']) ? $backtrace[1]['object'] : new \stdClass();
+            $accessor = $accessor->bindTo($scopeObject, get_class($scopeObject));
+        $returnValue = $accessor();
+
+        return $returnValue;
+    }
+
+    public function __clone()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, '__clone', array(), $this->initializer6442955ddc0f0682900613);
+
+        $this->valueHolder6442955ddc0e4400236845 = clone $this->valueHolder6442955ddc0e4400236845;
+    }
+
+    public function __sleep()
+    {
+        $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, '__sleep', array(), $this->initializer6442955ddc0f0682900613);
+
+        return array('valueHolder6442955ddc0e4400236845');
+    }
+
+    public function __wakeup()
+    {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setProxyInitializer(\Closure $initializer = null)
+    {
+        $this->initializer6442955ddc0f0682900613 = $initializer;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getProxyInitializer()
+    {
+        return $this->initializer6442955ddc0f0682900613;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function initializeProxy()
+    {
+        return $this->initializer6442955ddc0f0682900613 && $this->initializer6442955ddc0f0682900613->__invoke($this->valueHolder6442955ddc0e4400236845, $this, 'initializeProxy', array(), $this->initializer6442955ddc0f0682900613);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isProxyInitialized()
+    {
+        return null !== $this->valueHolder6442955ddc0e4400236845;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getWrappedValueHolderValue()
+    {
+        return $this->valueHolder6442955ddc0e4400236845;
+    }
+
+
 }

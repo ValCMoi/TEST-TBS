@@ -23,6 +23,7 @@
       <parameter key="LexikJWTAuthenticationBundle">Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle</parameter>
       <parameter key="FOSUserBundle">FOS\UserBundle\FOSUserBundle</parameter>
       <parameter key="AppBundle">AppBundle\AppBundle</parameter>
+      <parameter key="DoctrineMigrationsBundle">Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle</parameter>
       <parameter key="DebugBundle">Symfony\Bundle\DebugBundle\DebugBundle</parameter>
       <parameter key="WebProfilerBundle">Symfony\Bundle\WebProfilerBundle\WebProfilerBundle</parameter>
       <parameter key="SensioDistributionBundle">Sensio\Bundle\DistributionBundle\SensioDistributionBundle</parameter>
@@ -105,6 +106,11 @@
         <parameter key="path">/home/val/Projet/TEST-TBS/src/AppBundle</parameter>
         <parameter key="namespace">AppBundle</parameter>
       </parameter>
+      <parameter key="DoctrineMigrationsBundle" type="collection">
+        <parameter key="parent">null</parameter>
+        <parameter key="path">/home/val/Projet/TEST-TBS/vendor/doctrine/doctrine-migrations-bundle</parameter>
+        <parameter key="namespace">Doctrine\Bundle\MigrationsBundle</parameter>
+      </parameter>
       <parameter key="DebugBundle" type="collection">
         <parameter key="parent">null</parameter>
         <parameter key="path">/home/val/Projet/TEST-TBS/vendor/symfony/symfony/src/Symfony/Bundle/DebugBundle</parameter>
@@ -147,6 +153,7 @@
     <parameter key="jwt_public_key_path">/home/val/Projet/TEST-TBS/app/../var/jwt/public.pem</parameter>
     <parameter key="jwt_key_pass_phrase"></parameter>
     <parameter key="jwt_token_ttl">3600</parameter>
+    <parameter key="kernel.project_dir">/home/val/Projet/TEST-TBS</parameter>
     <parameter key="locale">en</parameter>
     <parameter key="fragment.renderer.hinclude.global_template">null</parameter>
     <parameter key="fragment.path">/_fragment</parameter>
@@ -641,6 +648,10 @@
       <parameter>ResetPassword</parameter>
       <parameter>Default</parameter>
     </parameter>
+    <parameter key="doctrine_migrations.dir_name">/home/val/Projet/TEST-TBS/src/Migrations</parameter>
+    <parameter key="doctrine_migrations.namespace">AppBundle\Migrations</parameter>
+    <parameter key="doctrine_migrations.table_name">migration_versions</parameter>
+    <parameter key="doctrine_migrations.name">Application Migrations</parameter>
     <parameter key="web_profiler.debug_toolbar.position">bottom</parameter>
     <parameter key="web_profiler.debug_toolbar.intercept_redirects">false</parameter>
     <parameter key="web_profiler.debug_toolbar.mode">2</parameter>
@@ -822,6 +833,10 @@
     </parameter>
   </parameters>
   <services>
+    <service id="app.controller.contact" class="AppBundle\Controller\ContactController">
+      <tag name="controller.service_arguments"/>
+      <argument type="service" id="doctrine.orm.entity_manager"/>
+    </service>
     <service id="controller_name_converter" class="Symfony\Bundle\FrameworkBundle\Controller\ControllerNameParser" public="false">
       <tag name="monolog.logger" channel="request"/>
       <argument type="service" id="kernel"/>
@@ -882,7 +897,7 @@
                 <tag name="cache.pool" clearer="cache.default_clearer"/>
                 <argument>x9CplS8AwV</argument>
                 <argument>0</argument>
-                <argument>88Kd2Oca2RCtQpebjCEIao</argument>
+                <argument>CY816Ro+UbtGzNNmZho8gT</argument>
                 <argument>/home/val/Projet/TEST-TBS/var/cache/dev/pools</argument>
                 <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
                 <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
@@ -1070,7 +1085,7 @@
       <tag name="cache.pool" clearer="cache.default_clearer"/>
       <argument>YO5HkTvcMx</argument>
       <argument>0</argument>
-      <argument>88Kd2Oca2RCtQpebjCEIao</argument>
+      <argument>CY816Ro+UbtGzNNmZho8gT</argument>
       <argument>/home/val/Projet/TEST-TBS/var/cache/dev/pools</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
@@ -1080,7 +1095,7 @@
       <tag name="cache.pool" clearer="cache.default_clearer"/>
       <argument>bn8OfKb-cS</argument>
       <argument>0</argument>
-      <argument>88Kd2Oca2RCtQpebjCEIao</argument>
+      <argument>CY816Ro+UbtGzNNmZho8gT</argument>
       <argument>/home/val/Projet/TEST-TBS/var/cache/dev/pools</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
@@ -1928,6 +1943,7 @@
           <argument type="service" id="session"/>
         </service>
       </argument>
+      <argument type="service" id="request_stack" on-invalid="ignore"/>
     </service>
     <service id="assets.packages" class="Symfony\Component\Asset\Packages">
       <argument type="service">
@@ -2517,7 +2533,7 @@
         </argument>
         <argument type="service">
           <service class="Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider" public="false">
-            <argument>644147076a6636.35785436</argument>
+            <argument>6442955d63a681.81260595</argument>
           </service>
         </argument>
         <argument type="service">
@@ -2541,7 +2557,7 @@
         </argument>
         <argument type="service">
           <service class="Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider" public="false">
-            <argument>644147076a6636.35785436</argument>
+            <argument>6442955d63a681.81260595</argument>
           </service>
         </argument>
       </argument>
@@ -2807,7 +2823,7 @@
         <argument type="service">
           <service class="Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener" public="false">
             <argument type="service" id="security.token_storage"/>
-            <argument>644147076a6636.35785436</argument>
+            <argument>6442955d63a681.81260595</argument>
             <argument type="service" id="monolog.logger.security" on-invalid="null"/>
             <argument type="service" id="security.authentication.manager"/>
           </service>
@@ -2998,7 +3014,7 @@
         <argument type="service">
           <service class="Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener" public="false">
             <argument type="service" id="security.token_storage"/>
-            <argument>644147076a6636.35785436</argument>
+            <argument>6442955d63a681.81260595</argument>
             <argument type="service" id="monolog.logger.security" on-invalid="null"/>
             <argument type="service" id="security.authentication.manager"/>
           </service>
@@ -3590,6 +3606,7 @@
         <argument key="LexikJWTAuthenticationBundle">Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle</argument>
         <argument key="FOSUserBundle">FOS\UserBundle\FOSUserBundle</argument>
         <argument key="AppBundle">AppBundle\AppBundle</argument>
+        <argument key="DoctrineMigrationsBundle">Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle</argument>
         <argument key="DebugBundle">Symfony\Bundle\DebugBundle\DebugBundle</argument>
         <argument key="WebProfilerBundle">Symfony\Bundle\WebProfilerBundle\WebProfilerBundle</argument>
         <argument key="SensioDistributionBundle">Sensio\Bundle\DistributionBundle\SensioDistributionBundle</argument>
@@ -3943,14 +3960,13 @@
       <argument type="service" id="translator"/>
       <argument type="service" id="sonata.core.model.adapter.chain"/>
     </service>
+    <service id="sonata.core.model.adapter.doctrine_orm" class="Sonata\CoreBundle\Model\Adapter\DoctrineORMAdapter" public="false">
+      <argument type="service" id="doctrine" on-invalid="ignore"/>
+      <deprecated>The "%service_id%" service is deprecated since 3.x and will be removed in 4.0.</deprecated>
+    </service>
     <service id="sonata.core.model.adapter.chain" class="Sonata\CoreBundle\Model\Adapter\AdapterChain">
       <call method="addAdapter">
-        <argument type="service">
-          <service class="Sonata\CoreBundle\Model\Adapter\DoctrineORMAdapter" public="false">
-            <argument type="service" id="doctrine" on-invalid="ignore"/>
-            <deprecated>The "%service_id%" service is deprecated since 3.x and will be removed in 4.0.</deprecated>
-          </service>
-        </argument>
+        <argument type="service" id="sonata.core.model.adapter.doctrine_orm"/>
       </call>
       <deprecated>The "%service_id%" service is deprecated since 3.x and will be removed in 4.0.</deprecated>
     </service>
@@ -5196,6 +5212,13 @@
     <service id="doctrine.fixtures_load_command" class="Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand">
       <tag name="console.command" command="doctrine:fixtures:load"/>
     </service>
+    <service id="doctrine.orm.entity_manager" class="Doctrine\ORM\EntityManagerInterface" synthetic="true">
+      <argument>Doctrine\Bundle\DoctrineBundle\ConnectionFactory</argument>
+      <argument type="collection">
+        <argument key="dbname">symfony</argument>
+      </argument>
+      <factory class="Doctrine\ORM\EntityManager" method="create"/>
+    </service>
     <service id="monolog.logger.request" class="Symfony\Bridge\Monolog\Logger">
       <argument>request</argument>
       <call method="pushProcessor">
@@ -5810,7 +5833,6 @@
     <service id="swiftmailer.transport" alias="swiftmailer.mailer.default.transport"/>
     <service id="mailer" alias="swiftmailer.mailer.default"/>
     <service id="database_connection" alias="doctrine.dbal.default_connection"/>
-    <service id="doctrine.orm.entity_manager" alias="doctrine.orm.default_entity_manager"/>
     <service id="doctrine.orm.default_metadata_cache" alias="doctrine_cache.providers.doctrine.orm.default_metadata_cache"/>
     <service id="doctrine.orm.default_result_cache" alias="doctrine_cache.providers.doctrine.orm.default_result_cache"/>
     <service id="doctrine.orm.default_query_cache" alias="doctrine_cache.providers.doctrine.orm.default_query_cache"/>

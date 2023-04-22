@@ -56,11 +56,6 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
                 }
 
-                // _profiler_info
-                if (0 === strpos($pathinfo, '/_profiler/info') && preg_match('#^/_profiler/info/(?P<about>[^/]++)$#s', $pathinfo, $matches)) {
-                    return $this->mergeDefaults(array_replace($matches, array('_route' => '_profiler_info')), array (  '_controller' => 'web_profiler.controller.profiler:infoAction',));
-                }
-
                 // _profiler_phpinfo
                 if ($pathinfo === '/_profiler/phpinfo') {
                     return array (  '_controller' => 'web_profiler.controller.profiler:phpinfoAction',  '_route' => '_profiler_phpinfo',);
@@ -105,191 +100,67 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        if (0 === strpos($pathinfo, '/log')) {
-            if (0 === strpos($pathinfo, '/login')) {
-                // fos_user_security_login
-                if ($pathinfo === '/login') {
-                    if (!in_array($this->context->getMethod(), array('GET', 'POST', 'HEAD'))) {
-                        $allow = array_merge($allow, array('GET', 'POST', 'HEAD'));
-                        goto not_fos_user_security_login;
-                    }
-
-                    return array (  '_controller' => 'fos_user.security.controller:loginAction',  '_route' => 'fos_user_security_login',);
-                }
-                not_fos_user_security_login:
-
-                // fos_user_security_check
-                if ($pathinfo === '/login_check') {
-                    if ($this->context->getMethod() != 'POST') {
-                        $allow[] = 'POST';
-                        goto not_fos_user_security_check;
-                    }
-
-                    return array (  '_controller' => 'fos_user.security.controller:checkAction',  '_route' => 'fos_user_security_check',);
-                }
-                not_fos_user_security_check:
-
-            }
-
-            // fos_user_security_logout
-            if ($pathinfo === '/logout') {
-                if (!in_array($this->context->getMethod(), array('GET', 'POST', 'HEAD'))) {
-                    $allow = array_merge($allow, array('GET', 'POST', 'HEAD'));
-                    goto not_fos_user_security_logout;
-                }
-
-                return array (  '_controller' => 'fos_user.security.controller:logoutAction',  '_route' => 'fos_user_security_logout',);
-            }
-            not_fos_user_security_logout:
-
-        }
-
-        if (0 === strpos($pathinfo, '/profile')) {
-            // fos_user_profile_show
-            if (rtrim($pathinfo, '/') === '/profile') {
+        if (0 === strpos($pathinfo, '/contact')) {
+            // contact_index
+            if (rtrim($pathinfo, '/') === '/contact') {
                 if (!in_array($this->context->getMethod(), array('GET', 'HEAD'))) {
                     $allow = array_merge($allow, array('GET', 'HEAD'));
-                    goto not_fos_user_profile_show;
+                    goto not_contact_index;
                 }
 
                 if (substr($pathinfo, -1) !== '/') {
-                    return $this->redirect($pathinfo.'/', 'fos_user_profile_show');
+                    return $this->redirect($pathinfo.'/', 'contact_index');
                 }
 
-                return array (  '_controller' => 'fos_user.profile.controller:showAction',  '_route' => 'fos_user_profile_show',);
+                return array (  '_controller' => 'AppBundle\\Controller\\ContactController::indexAction',  '_route' => 'contact_index',);
             }
-            not_fos_user_profile_show:
+            not_contact_index:
 
-            // fos_user_profile_edit
-            if ($pathinfo === '/profile/edit') {
+            // contact_new
+            if ($pathinfo === '/contact/new') {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_contact_new;
+                }
+
+                return array (  '_controller' => 'AppBundle\\Controller\\ContactController::newAction',  '_route' => 'contact_new',);
+            }
+            not_contact_new:
+
+            // contact_show
+            if (preg_match('#^/contact/(?P<id>[^/]++)$#s', $pathinfo, $matches)) {
+                if (!in_array($this->context->getMethod(), array('GET', 'HEAD'))) {
+                    $allow = array_merge($allow, array('GET', 'HEAD'));
+                    goto not_contact_show;
+                }
+
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'contact_show')), array (  '_controller' => 'AppBundle\\Controller\\ContactController::showAction',));
+            }
+            not_contact_show:
+
+            // contact_edit
+            if (preg_match('#^/contact/(?P<id>[^/]++)/edit$#s', $pathinfo, $matches)) {
                 if (!in_array($this->context->getMethod(), array('GET', 'POST', 'HEAD'))) {
                     $allow = array_merge($allow, array('GET', 'POST', 'HEAD'));
-                    goto not_fos_user_profile_edit;
+                    goto not_contact_edit;
                 }
 
-                return array (  '_controller' => 'fos_user.profile.controller:editAction',  '_route' => 'fos_user_profile_edit',);
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'contact_edit')), array (  '_controller' => 'AppBundle\\Controller\\ContactController::editAction',));
             }
-            not_fos_user_profile_edit:
+            not_contact_edit:
+
+            // contact_delete
+            if (preg_match('#^/contact/(?P<id>[^/]++)$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'DELETE') {
+                    $allow[] = 'DELETE';
+                    goto not_contact_delete;
+                }
+
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'contact_delete')), array (  '_controller' => 'AppBundle\\Controller\\ContactController::deleteAction',));
+            }
+            not_contact_delete:
 
         }
-
-        if (0 === strpos($pathinfo, '/re')) {
-            if (0 === strpos($pathinfo, '/register')) {
-                // fos_user_registration_register
-                if (rtrim($pathinfo, '/') === '/register') {
-                    if (!in_array($this->context->getMethod(), array('GET', 'POST', 'HEAD'))) {
-                        $allow = array_merge($allow, array('GET', 'POST', 'HEAD'));
-                        goto not_fos_user_registration_register;
-                    }
-
-                    if (substr($pathinfo, -1) !== '/') {
-                        return $this->redirect($pathinfo.'/', 'fos_user_registration_register');
-                    }
-
-                    return array (  '_controller' => 'fos_user.registration.controller:registerAction',  '_route' => 'fos_user_registration_register',);
-                }
-                not_fos_user_registration_register:
-
-                if (0 === strpos($pathinfo, '/register/c')) {
-                    // fos_user_registration_check_email
-                    if ($pathinfo === '/register/check-email') {
-                        if (!in_array($this->context->getMethod(), array('GET', 'HEAD'))) {
-                            $allow = array_merge($allow, array('GET', 'HEAD'));
-                            goto not_fos_user_registration_check_email;
-                        }
-
-                        return array (  '_controller' => 'fos_user.registration.controller:checkEmailAction',  '_route' => 'fos_user_registration_check_email',);
-                    }
-                    not_fos_user_registration_check_email:
-
-                    if (0 === strpos($pathinfo, '/register/confirm')) {
-                        // fos_user_registration_confirm
-                        if (preg_match('#^/register/confirm/(?P<token>[^/]++)$#s', $pathinfo, $matches)) {
-                            if (!in_array($this->context->getMethod(), array('GET', 'HEAD'))) {
-                                $allow = array_merge($allow, array('GET', 'HEAD'));
-                                goto not_fos_user_registration_confirm;
-                            }
-
-                            return $this->mergeDefaults(array_replace($matches, array('_route' => 'fos_user_registration_confirm')), array (  '_controller' => 'fos_user.registration.controller:confirmAction',));
-                        }
-                        not_fos_user_registration_confirm:
-
-                        // fos_user_registration_confirmed
-                        if ($pathinfo === '/register/confirmed') {
-                            if (!in_array($this->context->getMethod(), array('GET', 'HEAD'))) {
-                                $allow = array_merge($allow, array('GET', 'HEAD'));
-                                goto not_fos_user_registration_confirmed;
-                            }
-
-                            return array (  '_controller' => 'fos_user.registration.controller:confirmedAction',  '_route' => 'fos_user_registration_confirmed',);
-                        }
-                        not_fos_user_registration_confirmed:
-
-                    }
-
-                }
-
-            }
-
-            if (0 === strpos($pathinfo, '/resetting')) {
-                // fos_user_resetting_request
-                if ($pathinfo === '/resetting/request') {
-                    if (!in_array($this->context->getMethod(), array('GET', 'HEAD'))) {
-                        $allow = array_merge($allow, array('GET', 'HEAD'));
-                        goto not_fos_user_resetting_request;
-                    }
-
-                    return array (  '_controller' => 'fos_user.resetting.controller:requestAction',  '_route' => 'fos_user_resetting_request',);
-                }
-                not_fos_user_resetting_request:
-
-                // fos_user_resetting_send_email
-                if ($pathinfo === '/resetting/send-email') {
-                    if ($this->context->getMethod() != 'POST') {
-                        $allow[] = 'POST';
-                        goto not_fos_user_resetting_send_email;
-                    }
-
-                    return array (  '_controller' => 'fos_user.resetting.controller:sendEmailAction',  '_route' => 'fos_user_resetting_send_email',);
-                }
-                not_fos_user_resetting_send_email:
-
-                // fos_user_resetting_check_email
-                if ($pathinfo === '/resetting/check-email') {
-                    if (!in_array($this->context->getMethod(), array('GET', 'HEAD'))) {
-                        $allow = array_merge($allow, array('GET', 'HEAD'));
-                        goto not_fos_user_resetting_check_email;
-                    }
-
-                    return array (  '_controller' => 'fos_user.resetting.controller:checkEmailAction',  '_route' => 'fos_user_resetting_check_email',);
-                }
-                not_fos_user_resetting_check_email:
-
-                // fos_user_resetting_reset
-                if (0 === strpos($pathinfo, '/resetting/reset') && preg_match('#^/resetting/reset/(?P<token>[^/]++)$#s', $pathinfo, $matches)) {
-                    if (!in_array($this->context->getMethod(), array('GET', 'POST', 'HEAD'))) {
-                        $allow = array_merge($allow, array('GET', 'POST', 'HEAD'));
-                        goto not_fos_user_resetting_reset;
-                    }
-
-                    return $this->mergeDefaults(array_replace($matches, array('_route' => 'fos_user_resetting_reset')), array (  '_controller' => 'fos_user.resetting.controller:resetAction',));
-                }
-                not_fos_user_resetting_reset:
-
-            }
-
-        }
-
-        // fos_user_change_password
-        if ($pathinfo === '/profile/change-password') {
-            if (!in_array($this->context->getMethod(), array('GET', 'POST', 'HEAD'))) {
-                $allow = array_merge($allow, array('GET', 'POST', 'HEAD'));
-                goto not_fos_user_change_password;
-            }
-
-            return array (  '_controller' => 'fos_user.change_password.controller:changePasswordAction',  '_route' => 'fos_user_change_password',);
-        }
-        not_fos_user_change_password:
 
         // index_action
         if (rtrim($pathinfo, '/') === '') {
@@ -298,6 +169,109 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             }
 
             return array (  '_controller' => 'AppBundle\\Controller\\DefaultController::indexAction',  '_route' => 'index_action',);
+        }
+
+        if (0 === strpos($pathinfo, '/product')) {
+            // product_new
+            if ($pathinfo === '/product/new') {
+                if (!in_array($this->context->getMethod(), array('GET', 'POST', 'HEAD'))) {
+                    $allow = array_merge($allow, array('GET', 'POST', 'HEAD'));
+                    goto not_product_new;
+                }
+
+                return array (  '_controller' => 'AppBundle\\Controller\\ProductController::newAction',  '_route' => 'product_new',);
+            }
+            not_product_new:
+
+            // product_show
+            if (preg_match('#^/product/(?P<id>[^/]++)$#s', $pathinfo, $matches)) {
+                if (!in_array($this->context->getMethod(), array('GET', 'HEAD'))) {
+                    $allow = array_merge($allow, array('GET', 'HEAD'));
+                    goto not_product_show;
+                }
+
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'product_show')), array (  '_controller' => 'AppBundle\\Controller\\ProductController::showAction',));
+            }
+            not_product_show:
+
+            // product_delete
+            if (preg_match('#^/product/(?P<id>[^/]++)$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'DELETE') {
+                    $allow[] = 'DELETE';
+                    goto not_product_delete;
+                }
+
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'product_delete')), array (  '_controller' => 'AppBundle\\Controller\\ProductController::deleteAction',));
+            }
+            not_product_delete:
+
+        }
+
+        if (0 === strpos($pathinfo, '/subscription')) {
+            // subscription_index
+            if (rtrim($pathinfo, '/') === '/subscription') {
+                if (!in_array($this->context->getMethod(), array('GET', 'HEAD'))) {
+                    $allow = array_merge($allow, array('GET', 'HEAD'));
+                    goto not_subscription_index;
+                }
+
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'subscription_index');
+                }
+
+                return array (  '_controller' => 'AppBundle\\Controller\\SubscriptionController::indexAction',  '_route' => 'subscription_index',);
+            }
+            not_subscription_index:
+
+            // subscription_new
+            if ($pathinfo === '/subscription/new') {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_subscription_new;
+                }
+
+                return array (  '_controller' => 'AppBundle\\Controller\\SubscriptionController::newAction',  '_route' => 'subscription_new',);
+            }
+            not_subscription_new:
+
+            // subscription_show
+            if (preg_match('#^/subscription/(?P<id>[^/]++)$#s', $pathinfo, $matches)) {
+                if (!in_array($this->context->getMethod(), array('GET', 'HEAD'))) {
+                    $allow = array_merge($allow, array('GET', 'HEAD'));
+                    goto not_subscription_show;
+                }
+
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'subscription_show')), array (  '_controller' => 'AppBundle\\Controller\\SubscriptionController::showAction',));
+            }
+            not_subscription_show:
+
+            // subscription_edit
+            if (preg_match('#^/subscription/(?P<id>[^/]++)/edit$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'PUT') {
+                    $allow[] = 'PUT';
+                    goto not_subscription_edit;
+                }
+
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'subscription_edit')), array (  '_controller' => 'AppBundle\\Controller\\SubscriptionController::editAction',));
+            }
+            not_subscription_edit:
+
+            // subscription_delete
+            if (preg_match('#^/subscription/(?P<id>[^/]++)$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'DELETE') {
+                    $allow[] = 'DELETE';
+                    goto not_subscription_delete;
+                }
+
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'subscription_delete')), array (  '_controller' => 'AppBundle\\Controller\\SubscriptionController::deleteAction',));
+            }
+            not_subscription_delete:
+
+        }
+
+        // create_contact
+        if ($pathinfo === '/contact') {
+            return array (  '_controller' => 'AppBundle\\Controller\\ContactController::createContactAction',  '_route' => 'create_contact',);
         }
 
         throw 0 < count($allow) ? new MethodNotAllowedException(array_unique($allow)) : new ResourceNotFoundException();

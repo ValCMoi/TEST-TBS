@@ -422,13 +422,12 @@ class __TwigTemplate_ace576343ad97327e899058f90bfa610eaa321d9d41ffcb18da69e28f94
     100% { background: #222; }
 }
 
-.sf-toolbar-block.sf-toolbar-block-dump {
-    position: static;
-}
-
 .sf-toolbar-block.sf-toolbar-block-dump .sf-toolbar-info {
     max-width: none;
-    right: 0;
+    width: 100%;
+    position: fixed;
+    box-sizing: border-box;
+    left: 0;
 }
 
 .sf-toolbar-block-dump pre.sf-dump {
@@ -453,9 +452,9 @@ class __TwigTemplate_ace576343ad97327e899058f90bfa610eaa321d9d41ffcb18da69e28f94
 
 /* Override the setting when the toolbar is on the top */
 ";
-        // line 402
+        // line 401
         if (((isset($context["position"]) ? $context["position"] : $this->getContext($context, "position")) == "top")) {
-            // line 403
+            // line 402
             echo "    .sf-minitoolbar {
         border-bottom-left-radius: 4px;
         border-top-left-radius: 0;
@@ -476,18 +475,18 @@ class __TwigTemplate_ace576343ad97327e899058f90bfa610eaa321d9d41ffcb18da69e28f94
     }
 ";
         }
-        // line 422
+        // line 421
         echo "
 ";
-        // line 423
+        // line 422
         if ( !(isset($context["floatable"]) ? $context["floatable"] : $this->getContext($context, "floatable"))) {
-            // line 424
+            // line 423
             echo "    .sf-toolbarreset {
         position: static;
     }
 ";
         }
-        // line 428
+        // line 427
         echo "
 /* Responsive Design */
 .sf-toolbar-icon .sf-toolbar-label,
@@ -615,6 +614,13 @@ class __TwigTemplate_ace576343ad97327e899058f90bfa610eaa321d9d41ffcb18da69e28f94
     padding: 5px 0;
     margin-right: 10px;
 }
+
+/***** Media query print: Do not print the Toolbar. *****/
+@media print {
+    .sf-toolbar {
+        display: none;
+    }
+}
 ";
         
         $__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e->leave($__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e_prof);
@@ -636,7 +642,7 @@ class __TwigTemplate_ace576343ad97327e899058f90bfa610eaa321d9d41ffcb18da69e28f94
 
     public function getDebugInfo()
     {
-        return array (  491 => 428,  485 => 424,  483 => 423,  480 => 422,  459 => 403,  457 => 402,  278 => 226,  271 => 222,  264 => 218,  257 => 214,  251 => 211,  245 => 208,  38 => 3,  36 => 2,);
+        return array (  490 => 427,  484 => 423,  482 => 422,  479 => 421,  458 => 402,  456 => 401,  278 => 226,  271 => 222,  264 => 218,  257 => 214,  251 => 211,  245 => 208,  38 => 3,  36 => 2,);
     }
 
     /** @deprecated since 1.27 (to be removed in 2.0). Use getSourceContext() instead */
@@ -1020,13 +1026,12 @@ class __TwigTemplate_ace576343ad97327e899058f90bfa610eaa321d9d41ffcb18da69e28f94
     100% { background: #222; }
 }
 
-.sf-toolbar-block.sf-toolbar-block-dump {
-    position: static;
-}
-
 .sf-toolbar-block.sf-toolbar-block-dump .sf-toolbar-info {
     max-width: none;
-    right: 0;
+    width: 100%;
+    position: fixed;
+    box-sizing: border-box;
+    left: 0;
 }
 
 .sf-toolbar-block-dump pre.sf-dump {
@@ -1202,6 +1207,13 @@ class __TwigTemplate_ace576343ad97327e899058f90bfa610eaa321d9d41ffcb18da69e28f94
     float: left;
     padding: 5px 0;
     margin-right: 10px;
+}
+
+/***** Media query print: Do not print the Toolbar. *****/
+@media print {
+    .sf-toolbar {
+        display: none;
+    }
 }
 ", "@WebProfiler/Profiler/toolbar.css.twig", "/home/val/Projet/TEST-TBS/vendor/symfony/symfony/src/Symfony/Bundle/WebProfilerBundle/Resources/views/Profiler/toolbar.css.twig");
     }
